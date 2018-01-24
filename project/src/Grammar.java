@@ -1,3 +1,4 @@
+import java.awt.image.AreaAveragingScaleFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -12,12 +13,13 @@ public class Grammar {
     private HashMap<Integer, Rule> rules;
     private FileInputStream file;
     ArrayList<Terminal> terminals;
-    ArrayList<NonTerminal> nonTerminals;
+    private ArrayList<NonTerminal> nonTerminals;
 
     Grammar(String string){
         try {
             file = new FileInputStream("project/src/" + string);
             initialize_grammar();
+
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
         }
@@ -39,6 +41,11 @@ public class Grammar {
             System.out.println(n.name);
         }
         System.out.println();
+    }
+
+
+    public Rule getRule(Integer num){
+        return rules.get(num);
     }
 
     public static void main(String[] args) {
