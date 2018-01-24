@@ -1,0 +1,61 @@
+1.	Goal -> Source EOF
+2.	Source -> ClassDeclarations MainClass
+3.	MainClass -> public class Identifier { public static void main () { VarDeclarations Statements } }
+4.	ClassDeclarations -> ClassDeclaration ClassDeclarations
+4.	ClassDeclarations -> ϵ
+5.	ClassDeclaration -> class Identifier Extension { FieldDeclarations MethodDeclarations }
+6.	Extension -> extends Identifier
+6.	Extension -> ϵ
+7.	FieldDeclarations -> FieldDeclaration FieldDeclarations
+7.	FieldDeclarations -> ϵ
+8.	FieldDeclaration -> static Type Identifier ;
+9.	VarDeclarations -> VarDeclaration VarDeclarations
+9.	VarDeclarations -> ϵ
+10.	VarDeclaration -> Type Identifier ;
+11.	MethodDeclarations -> MethodDeclaration MethodDeclarations
+11.	MethodDeclarations -> ϵ
+12.	MethodDeclaration -> public static Type Identifier ( Parameters ) { VarDeclarations Statements return GenExpression ; }
+13.	Parameters -> Type Identifier Parameter
+13.	Parameters -> ϵ
+14.	Parameter -> , Type Identifier Parameter
+14.	Parameter -> ϵ
+15.	Type -> boolean
+15.	Type -> int
+16.	Statements -> Statement Statements
+16.	Statements -> ϵ
+17.	Statement -> { Statements }
+17.	Statement -> if ( GenExpression ) Statement else Statement
+17.	Statement -> while ( GenExpression Statement )
+17.	Statement -> for ( Identifier = Integer ; Expression RelTerm1 ; Identifier += Integer ) Statement
+17.	Statement -> Identifier = GenExpression ;
+17.	Statement -> System.out.println ( GenExpression ) ;
+18.	GenExpression -> Expression GenExpression1
+19.	GenExpression1 -> RelTerm1 RelExpression1
+19.	GenExpression1 -> ϵ
+20.	Expression -> Term Expression2
+21.	Expression2 -> Expression1 Expression2
+21.	Expression2 -> ϵ
+22.	Expression1 -> + Term
+22.	Expression1 -> - Term
+23.	Term -> Factor Term1
+24.	Term1 -> * Factor Term1
+24.	Term1 -> ϵ
+25.	Factor -> ( Expression )
+25.	Factor ->  Factor1
+25.	Factor -> true
+25.	Factor -> false
+25.	Factor -> Integer
+26.	Factor1 -> . Identifier Factor2
+26.	Factor1 -> ϵ
+27.	Factor2 -> ( Arguments )
+27.	Factor2 -> ϵ
+28.	RelExpression1 -> && Expression RelTerm1 RelExpression1
+28.	RelExpression1 -> ϵ
+29.	RelTerm1 -> == Expression
+29.	RelTerm1 -> < Expression
+30.	Arguments -> GenExpression Argument
+30.	Arguments -> ϵ
+31.	Argument -> , GenExpression Argument
+31.	Argument -> ϵ
+32.	Identifier -> 
+33.	Integer -> integer
