@@ -61,6 +61,14 @@ public class Grammar {
         return null;
     }
 
+    private Terminal getTerminal(String s){
+        for (Terminal t: terminals) {
+            if (Objects.equals(t.name, s))
+                return t;
+        }
+        return null;
+    }
+
     public Rule getRule(Integer num){
         return rules.get(num);
     }
