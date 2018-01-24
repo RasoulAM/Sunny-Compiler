@@ -37,12 +37,29 @@ public class Grammar {
             scanner.nextLine();
         }
 
+        scanner.close();
+
+        scanner = new Scanner(file);
+        while (scanner.hasNext()){
+            scanner.next();
+            String rhs = scanner.next();
+
+        }
+
         for (NonTerminal n: nonTerminals) {
             System.out.println(n.name);
         }
         System.out.println();
     }
 
+
+    private NonTerminal getNonterminal(String s){
+        for (NonTerminal n: nonTerminals) {
+            if (Objects.equals(n.name, s))
+                return n;
+        }
+        return null;
+    }
 
     public Rule getRule(Integer num){
         return rules.get(num);
