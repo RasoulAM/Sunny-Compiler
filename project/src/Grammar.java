@@ -40,10 +40,22 @@ public class Grammar {
         scanner.close();
 
         scanner = new Scanner(file);
+        int index = 1;
         while (scanner.hasNext()){
             scanner.next();
-            String rhs = scanner.next();
+            String lhs = scanner.next();
+            if (getNonterminal(lhs) == null) {
+                System.out.println("Undefined Non terminal in line " + (new Integer(index)).toString());
+                return;
+            }
+            if (!Objects.equals(scanner.next(), "->")) {
+                System.out.println("Grammar is not context free!!");
+                return;
+            }
 
+            String[] rhs = scanner.nextLine().split(" ");
+
+            rules.put(index, new Rule());
         }
 
         for (NonTerminal n: nonTerminals) {
