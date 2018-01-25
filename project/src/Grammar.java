@@ -9,20 +9,74 @@ import java.util.Scanner;
 public class Grammar {
 
     private java.util.Scanner scanner;
-    private HashMap<Integer, Rule> rules;
+    private ArrayList<Rule> rules;
     private FileInputStream file;
     private ArrayList<Symbol> terminals;
     private ArrayList<Symbol> nonTerminals;
-    private Symbol startSymbol;
+    Symbol startSymbol;
 
-    Grammar(String string){
+    static Symbol epsilon;
+
+
+
+    HashMap<Symbol, HashSet<Symbol> > first;
+
+    Grammar(){
         try {
-            file = new FileInputStream("project/src/" + string);
+            file = new FileInputStream("project/src/Grammar.grm");
             initialize_grammar();
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
         }
+
+        epsilon = getTerminal("ϵ");
+
+        setFirsts();
+    }
+
+    public void setFirsts(){
+        first = new HashMap<>();
+        HashSet<Symbol> epSet = new HashSet<>();
+        epSet.add(epsilon);
+        first.put(getTerminal("ϵ"), epSet);
+        for (Symbol t: terminals) {
+            HashSet h = new HashSet<>();
+            h.add(t);
+            first.put(t, h);
+        }
+
+        for (Symbol n: nonTerminals) {
+            first.put(n, new HashSet<>());
+        }
+
+        boolean change = true;
+        while(change){
+            change = false;
+            for (Rule r :rules) {
+                change = change || normalize(r);
+            }
+        }
+
+        for (int i = 0; i < nonTerminals.size(); i++) {
+            System.out.println(nonTerminals.get(i).toString() + " " + first.get(nonTerminals.get(i)).toString());
+        }
+    }
+    
+    private boolean normalize(Rule rule){
+        int initialSize = first.get(rule.LHS).size();
+        for (int i = 0; i < rule.RHS.size(); i++) {
+            HashSet<Symbol> s = new HashSet<>(first.get(rule.RHS.get(i)));
+            s.remove(epsilon);
+            first.get(rule.LHS).addAll(s);
+            if (!first.get(rule.RHS.get(i)).contains(epsilon))
+                return first.get(rule.LHS).size() != initialSize;
+        }
+        first.get(rule.LHS).add(epsilon);
+        return first.get(rule.LHS).size() != initialSize;
+    }
+
+    public void setFollows(){
 
     }
 
@@ -30,7 +84,7 @@ public class Grammar {
         scanner = new Scanner(file);
         nonTerminals = new ArrayList<>();
         terminals = new ArrayList<>();
-        rules = new HashMap<>();
+        rules = new ArrayList<>();
         boolean setStart = false;
         while(scanner.hasNext()){
             scanner.next();
@@ -83,12 +137,12 @@ public class Grammar {
                 }
             }
 
-            rules.put(index, new Rule(newLHS, newRHS));
+            rules.add(new Rule(newLHS, newRHS));
             index++;
         }
 
         System.out.println(rules.size());
-        for (int i = 1;i <= rules.size(); i++) {
+        for (int i = 0;i < rules.size(); i++) {
             if (rules.get(i) != null)
                 System.out.println(rules.get(i));
         }
@@ -116,8 +170,10 @@ public class Grammar {
         return rules.get(num);
     }
 
+
+
     public static void main(String[] args) {
-        new Grammar("Grammar.grm");
+        new Grammar();
     }
 
 

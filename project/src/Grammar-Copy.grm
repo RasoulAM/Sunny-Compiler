@@ -28,7 +28,7 @@
 17.	Statement -> while ( GenExpression Statement )
 17.	Statement -> for ( Identifier = Integer ; Expression RelTerm1 ; Identifier += Integer ) Statement
 17.	Statement -> Identifier = GenExpression ;
-17.	Statement -> System.out.println ( GenExpression ) ;
+17.	Statement -> System . out . println ( GenExpression ) ;
 18.	GenExpression -> Expression GenExpression1
 19.	GenExpression1 -> RelTerm1 RelExpression1
 19.	GenExpression1 -> ϵ
@@ -41,7 +41,7 @@
 24.	Term1 -> * Factor Term1
 24.	Term1 -> ϵ
 25.	Factor -> ( Expression )
-25.	Factor ->  Factor1
+25.	Factor -> Identifier Factor1
 25.	Factor -> true
 25.	Factor -> false
 25.	Factor -> Integer
