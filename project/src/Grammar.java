@@ -28,6 +28,8 @@ public class Grammar {
     private void initialize_grammar() {
         scanner = new Scanner(file);
         nonTerminals = new ArrayList<>();
+        terminals = new ArrayList<>();
+        rules = new HashMap<>();
         while(scanner.hasNext()){
             scanner.next();
             Element next = new Element(scanner.next(),Type.NON_TERMINAL);
@@ -38,27 +40,51 @@ public class Grammar {
 
         scanner.close();
 
-        scanner = new Scanner(file);
+        try {
+            scanner = new Scanner(new FileInputStream("project/src/" + "Grammar-Copy.grm"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         int index = 1;
         while (scanner.hasNext()){
+            // TODO: 1/25/2018 handle action symbols
             scanner.next();
             String lhs = scanner.next();
             if (getNonTerminal(lhs) == null) {
                 System.out.println("Undefined Non terminal in line " + (new Integer(index)).toString());
                 return;
             }
+            Element newLHS = getNonTerminal(lhs);
             if (!Objects.equals(scanner.next(), "->")) {
-                System.out.println("Grammar is not context free!!");
+                System.out.println("Grammar is not context free!! Check line " + index);
                 return;
             }
-
             String[] rhs = scanner.nextLine().split(" ");
+            ArrayList<Element> newRHS = new ArrayList<>();
+            for (String s: rhs) {
+                if (s.trim().length() == 0)
+                    continue;
+                if (getNonTerminal(s) != null){
+                    newRHS.add(getNonTerminal(s));
+                }
+                else if (getTerminal(s) != null){
+                    newRHS.add(getTerminal(s));
+                }
+                else {
+                    Element t = new Element(s, Type.TERMINAL);
+                    terminals.add(t);
+                    newRHS.add(t);
+                }
+            }
 
-            rules.put(index, new Rule());
+            rules.put(index, new Rule(newLHS, newRHS));
+            index++;
         }
 
-        for (Element n: nonTerminals) {
-            System.out.println(n.name);
+        System.out.println(rules.size());
+        for (int i = 1;i <= rules.size(); i++) {
+            if (rules.get(i) != null)
+                System.out.println(rules.get(i));
         }
         System.out.println();
     }
@@ -92,16 +118,26 @@ public class Grammar {
 }
 
 class Rule{
-    SententialForm LHS;
-    SententialForm RHS;
+    Element LHS;
+    ArrayList<Element> RHS;
 
-}
+    Rule(Element LHS, ArrayList<Element> RHS){
+        if (LHS.type != Type.NON_TERMINAL){
+            System.out.println("LHS of a rule is not Non terminal!");
+            return;
+        }
+        this.LHS = LHS;
+        this.RHS = RHS;
+    }
 
-class SententialForm{
-    ArrayList<Element> elements;
-
-    SententialForm(String[] s){
-        elements = new ArrayList<>();
+    @Override
+    public String toString() {
+        String str;
+        str = LHS + " -> ";
+        for (int i = 0; i < RHS.size(); i++){
+            str += RHS.get(i) + " ";
+        }
+        return str;
     }
 }
 
@@ -123,5 +159,10 @@ class Element{
         if (!(obj instanceof Element))
             return false;
         return Objects.equals(((Element) obj).name, this.name);
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }
