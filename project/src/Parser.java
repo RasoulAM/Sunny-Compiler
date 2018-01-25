@@ -8,11 +8,12 @@ public class Parser {
     ParseTable parseTable;
     SymbolTable parentTable;
     ArrayList<SymbolTable> scopes;
+    Stack<Symbol> parseStack;
+    ErrorHandler errorHandler;
+
     Scanner scanner;
 
     Grammar grammar;
-
-    Stack<Symbol> parseStack;
 
     String programSrc = "src";
 
@@ -21,12 +22,12 @@ public class Parser {
     Parser(){
         parseTable = new ParseTable();
         parentTable = new SymbolTable();
+        parseStack = new Stack<>();
         scopes = new ArrayList<>();
-
-        scanner = new Scanner(programSrc,parentTable);
+        errorHandler = new ErrorHandler(parseStack);
+        scanner = new Scanner(programSrc,parentTable, errorHandler);
         grammar = new Grammar();
 
-        parseStack = new Stack<>();
         parseStack.push(grammar.startSymbol);
         startParse();
     }
