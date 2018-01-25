@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Grammar {
 
     private java.util.Scanner scanner;
-    private ArrayList<Rule> rules;
+    ArrayList<Rule> rules;
     private FileInputStream file;
     private ArrayList<Symbol> terminals;
     private ArrayList<Symbol> nonTerminals;
@@ -35,6 +35,10 @@ public class Grammar {
         epsilon = getTerminal("ϵ");
         endOfFile = getTerminal("EOF");
 
+        initializeFirstsAndFollows();
+    }
+
+    public void initializeFirstsAndFollows(){
         setFirsts();
         setFollows();
     }
@@ -62,9 +66,9 @@ public class Grammar {
             }
         }
 
-        for (int i = 0; i < nonTerminals.size(); i++) {
-            System.out.println(nonTerminals.get(i).toString() + " " + first.get(nonTerminals.get(i)).toString());
-        }
+//        for (int i = 0; i < nonTerminals.size(); i++) {
+//            System.out.println(nonTerminals.get(i).toString() + " " + first.get(nonTerminals.get(i)).toString());
+//        }
     }
     
     private boolean normalizeFirst(Rule rule){
@@ -87,8 +91,8 @@ public class Grammar {
         follow.put(startSymbol, h);
 
 
-        System.out.println(follow.get(nonTerminals.get(0)));
-        System.out.println(endOfFile);
+//        System.out.println(follow.get(nonTerminals.get(0)));
+//        System.out.println(endOfFile);
 
 
 
@@ -104,9 +108,9 @@ public class Grammar {
             }
         }
 
-        for (int i = 0; i < nonTerminals.size(); i++) {
-            System.out.println(nonTerminals.get(i).toString() + " " + follow.get(nonTerminals.get(i)).toString());
-        }
+//        for (int i = 0; i < nonTerminals.size(); i++) {
+//            System.out.println(nonTerminals.get(i).toString() + " " + follow.get(nonTerminals.get(i)).toString());
+//        }
 
 
     }
@@ -204,16 +208,16 @@ public class Grammar {
             index++;
         }
 
-        System.out.println(rules.size());
-        for (int i = 0;i < rules.size(); i++) {
-            if (rules.get(i) != null)
-                System.out.println(rules.get(i));
-        }
-        System.out.println();
+//        System.out.println(rules.size());
+//        for (int i = 0;i < rules.size(); i++) {
+//            if (rules.get(i) != null)
+//                System.out.println(rules.get(i));
+//        }
+//        System.out.println();
     }
 
 
-    private Symbol getNonTerminal(String s){
+    Symbol getNonTerminal(String s){
         for (Symbol n: nonTerminals) {
             if (Objects.equals(n.name, s))
                 return n;
@@ -221,7 +225,7 @@ public class Grammar {
         return null;
     }
 
-    private Symbol getTerminal(String s){
+    Symbol getTerminal(String s){
         for (Symbol t: terminals) {
             if (Objects.equals(t.name, s))
                 return t;

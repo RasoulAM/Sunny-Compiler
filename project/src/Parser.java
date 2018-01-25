@@ -25,16 +25,22 @@ public class Parser {
         parseStack = new Stack<>();
         scopes = new ArrayList<>();
         errorHandler = new ErrorHandler(parseStack);
-        scanner = new Scanner(programSrc,parentTable, errorHandler);
+        scanner = new Scanner(programSrc, parentTable, errorHandler);
         grammar = new Grammar();
 
         parseStack.push(grammar.startSymbol);
         startParse();
     }
 
+    public static void main(String[] args) {
+        new Parser();
+    }
+
     private void startParse() {
         currentToken = scanner.getNextToken();
+        System.out.println(currentToken);
         while(true){
+            System.out.println(parseStack);
             if (parseStack.empty())
                 break;
             switch (parseStack.peek().type){
@@ -56,7 +62,7 @@ public class Parser {
         Symbol prevTopOfStack = parseStack.pop();
         if (parseTable.get(prevTopOfStack,lookahead) == null)
             error();
-        ArrayList<Symbol> RHS = parseTable.get(prevTopOfStack,lookahead).RHS;
+        ArrayList<Symbol> RHS = parseTable.get(prevTopOfStack,lookahead);
         for (int i = RHS.size() - 1; i >= 0; i--){
             parseStack.push(RHS.get(i));
         }
