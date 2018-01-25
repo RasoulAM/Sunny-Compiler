@@ -120,13 +120,9 @@ public class Grammar {
             ArrayList<Symbol> a = new ArrayList<>(rule.RHS.subList(i + 1, rule.RHS.size()));
             follow.get(rule.RHS.get(i)).addAll(first(a));
             follow.get(rule.RHS.get(i)).remove(epsilon);
-            if (Objects.equals(rule.RHS.get(i).name, "Expression"))
-                System.out.println("                " + first(a));
             if (first(a).contains(epsilon)){
                 follow.get(rule.RHS.get(i)).addAll(follow.get(rule.LHS));
             }
-//            if (prevSize != first.get(rule.RHS.get(i)).size())
-//                System.out.println(prevSize + " " + first.get(rule.RHS.get(i)).size());
             change = change || (prevSize != follow.get(rule.RHS.get(i)).size());
         }
         return change;
@@ -139,7 +135,6 @@ public class Grammar {
             HashSet<Symbol> h = new HashSet<>(first.get(sentence.get(i)));
             h.remove(epsilon);
             ans.addAll(h);
-//            System.out.println("                            " + i + sentence.get(i) + first.get(sentence.get(i)) + "    " + h);
             if (!first.get(sentence.get(i)).contains(epsilon)){
                 return ans;
             }
