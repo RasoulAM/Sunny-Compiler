@@ -31,11 +31,16 @@ public class Grammar {
         nonTerminals = new ArrayList<>();
         terminals = new ArrayList<>();
         rules = new HashMap<>();
+        boolean setStart = false;
         while(scanner.hasNext()){
             scanner.next();
             Symbol next = new Symbol(scanner.next(),Type.NON_TERMINAL);
             if (!nonTerminals.contains(next))
                 nonTerminals.add(next);
+            if (!setStart) {
+                startSymbol = next;
+                setStart = true;
+            }
             scanner.nextLine();
         }
 
