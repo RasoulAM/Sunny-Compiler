@@ -16,10 +16,12 @@ public class Grammar {
     Symbol startSymbol;
 
     static Symbol epsilon;
+    static Symbol endOfFile;
 
 
 
     HashMap<Symbol, HashSet<Symbol> > first;
+    HashMap<Symbol, HashSet<Symbol> > follow;
 
     Grammar(){
         try {
@@ -31,8 +33,10 @@ public class Grammar {
         }
 
         epsilon = getTerminal("ϵ");
+        endOfFile = getTerminal("EOF");
 
         setFirsts();
+        setFollows();
     }
 
     public void setFirsts(){
@@ -77,7 +81,25 @@ public class Grammar {
     }
 
     public void setFollows(){
+        HashSet<Symbol> h = new HashSet<>();
+        h.add(endOfFile);
+        follow.put(startSymbol, h);
 
+
+
+    }
+
+    public HashSet<Symbol> first(ArrayList<Symbol> sentence){
+        HashSet<Symbol> ans = new HashSet<>();
+        for (int i = 0; i < sentence.size(); i++) {
+            HashSet<Symbol> h = first.get(sentence.get(i));
+            h.remove(epsilon);
+            if (!first.get(sentence.get(i)).contains(epsilon)){
+                return ans;
+            }
+        }
+        ans.add(epsilon);
+        return ans;
     }
 
     private void initialize_grammar() {
