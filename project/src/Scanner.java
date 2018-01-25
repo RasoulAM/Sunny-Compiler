@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class Scanner {
     // regex
@@ -9,6 +10,7 @@ public class Scanner {
     private static final String other2 = "[^0-9]";
     private static final String other3 = "[^=]";
     private static final String saniOther = "(.|\\s)";
+    private static final String validChars = "[a-zA-Z0-9|+|-|&|<|,|*|/|\\s|(|)|{|}|;|.]";
     // keywords
     private static final ArrayList<String> keywords= new ArrayList<>();
     static {
@@ -58,11 +60,16 @@ public class Scanner {
     private int lf = 0;
     private boolean done = false;
     private Token currentToken;
+    private ErrorHandler errorHandler;
+    // for keeping line
+    private int currentLineNumber = 1;
+    private int prevLf = 0;
 
     //constructor
-    public Scanner(String programAddress, SymbolTable currentSymbolTable){
+    public Scanner(String programAddress, SymbolTable currentSymbolTable, ErrorHandler errorHandler){
         this.programAddress = programAddress;
         this.currentSymbolTable = currentSymbolTable;
+        this.errorHandler = errorHandler;
         readProgram();
     }
 
@@ -70,10 +77,17 @@ public class Scanner {
     public Token getNextToken(){
         done = false;
         currentChar = program.substring(lf, lf + 1);
+        if (currentChar.equals("\n") && (prevLf != lf)){
+            prevLf = lf;
+            currentLineNumber++;
+        }
         while (!done){
             nextState();
             currentChar = program.substring(lf, lf + 1);
-
+            if (currentChar.equals("\n") && (prevLf != lf)){
+                prevLf = lf;
+                currentLineNumber++;
+            }
         }
         return currentToken;
     }
@@ -82,7 +96,9 @@ public class Scanner {
     public void nextState(){
         switch (currentState){
             case 0:
-                if (currentChar.matches(letter)){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illigalLanguageCharacter(currentLineNumber, currentChar);
+                }else if (currentChar.matches(letter)){
                     currentState = 1;
                     lf++;
                 } else if(currentChar.matches("\\s")){
@@ -260,10 +276,10 @@ public class Scanner {
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner("src/sample.txt", new SymbolTable());
+        Scanner scanner = new Scanner("src/sample.txt", new SymbolTable(), new ErrorHandler(new Stack<Symbol>()));
         for (int i = 0; i < 100; i++) {
             scanner.getNextToken();
-            System.out.println(scanner.currentToken);
+            System.out.println(scanner.currentToken + " "+ scanner.currentLineNumber);
         }
     }
 }
