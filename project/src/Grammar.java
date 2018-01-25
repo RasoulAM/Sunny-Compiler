@@ -66,9 +66,9 @@ public class Grammar {
             }
         }
 
-//        for (int i = 0; i < nonTerminals.size(); i++) {
-//            System.out.println(nonTerminals.get(i).toString() + " " + first.get(nonTerminals.get(i)).toString());
-//        }
+        for (int i = 0; i < nonTerminals.size(); i++) {
+            System.out.println(nonTerminals.get(i).toString() + " " + first.get(nonTerminals.get(i)).toString());
+        }
     }
     
     private boolean normalizeFirst(Rule rule){
@@ -108,9 +108,9 @@ public class Grammar {
             }
         }
 
-//        for (int i = 0; i < nonTerminals.size(); i++) {
-//            System.out.println(nonTerminals.get(i).toString() + " " + follow.get(nonTerminals.get(i)).toString());
-//        }
+        for (int i = 0; i < nonTerminals.size(); i++) {
+            System.out.println(nonTerminals.get(i).toString() + " " + follow.get(nonTerminals.get(i)).toString());
+        }
 
 
     }
