@@ -20,7 +20,7 @@ public class Token {
         return "";
     }
 
-    
+
     @Override
     public String toString() {
         return "Token{" +
