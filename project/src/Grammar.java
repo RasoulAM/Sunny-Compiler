@@ -11,8 +11,9 @@ public class Grammar {
     private java.util.Scanner scanner;
     private HashMap<Integer, Rule> rules;
     private FileInputStream file;
-    private ArrayList<Element> terminals;
-    private ArrayList<Element> nonTerminals;
+    private ArrayList<Symbol> terminals;
+    private ArrayList<Symbol> nonTerminals;
+    private Symbol startSymbol;
 
     Grammar(String string){
         try {
@@ -32,7 +33,7 @@ public class Grammar {
         rules = new HashMap<>();
         while(scanner.hasNext()){
             scanner.next();
-            Element next = new Element(scanner.next(),Type.NON_TERMINAL);
+            Symbol next = new Symbol(scanner.next(),Type.NON_TERMINAL);
             if (!nonTerminals.contains(next))
                 nonTerminals.add(next);
             scanner.nextLine();
@@ -54,13 +55,13 @@ public class Grammar {
                 System.out.println("Undefined Non terminal in line " + (new Integer(index)).toString());
                 return;
             }
-            Element newLHS = getNonTerminal(lhs);
+            Symbol newLHS = getNonTerminal(lhs);
             if (!Objects.equals(scanner.next(), "->")) {
                 System.out.println("Grammar is not context free!! Check line " + index);
                 return;
             }
             String[] rhs = scanner.nextLine().split(" ");
-            ArrayList<Element> newRHS = new ArrayList<>();
+            ArrayList<Symbol> newRHS = new ArrayList<>();
             for (String s: rhs) {
                 if (s.trim().length() == 0)
                     continue;
@@ -71,7 +72,7 @@ public class Grammar {
                     newRHS.add(getTerminal(s));
                 }
                 else {
-                    Element t = new Element(s, Type.TERMINAL);
+                    Symbol t = new Symbol(s, Type.TERMINAL);
                     terminals.add(t);
                     newRHS.add(t);
                 }
@@ -90,16 +91,16 @@ public class Grammar {
     }
 
 
-    private Element getNonTerminal(String s){
-        for (Element n: nonTerminals) {
+    private Symbol getNonTerminal(String s){
+        for (Symbol n: nonTerminals) {
             if (Objects.equals(n.name, s))
                 return n;
         }
         return null;
     }
 
-    private Element getTerminal(String s){
-        for (Element t: terminals) {
+    private Symbol getTerminal(String s){
+        for (Symbol t: terminals) {
             if (Objects.equals(t.name, s))
                 return t;
         }
@@ -118,10 +119,10 @@ public class Grammar {
 }
 
 class Rule{
-    Element LHS;
-    ArrayList<Element> RHS;
+    Symbol LHS;
+    ArrayList<Symbol> RHS;
 
-    Rule(Element LHS, ArrayList<Element> RHS){
+    Rule(Symbol LHS, ArrayList<Symbol> RHS){
         if (LHS.type != Type.NON_TERMINAL){
             System.out.println("LHS of a rule is not Non terminal!");
             return;
@@ -145,20 +146,20 @@ enum Type {
     TERMINAL, NON_TERMINAL, ACTION_SYMBOL
 }
 
-class Element{
+class Symbol {
     String name;
     Type type;
 
-    Element(String name, Type type){
+    Symbol(String name, Type type){
         this.name = name;
         this.type = type;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Element))
+        if (!(obj instanceof Symbol))
             return false;
-        return Objects.equals(((Element) obj).name, this.name);
+        return Objects.equals(((Symbol) obj).name, this.name);
     }
 
     @Override
