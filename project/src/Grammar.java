@@ -85,9 +85,19 @@ public class Grammar {
         HashSet<Symbol> h = new HashSet<>();
         h.add(endOfFile);
         follow.put(startSymbol, h);
+
+
+        System.out.println(follow.get(nonTerminals.get(0)));
+        System.out.println(endOfFile);
+
+
+
+        for (Symbol s : nonTerminals) {
+            follow.put(s,new HashSet<>());
+        }
+
         boolean change = true;
         while(change){
-            System.out.println("DDDDD");
             change = false;
             for (Rule r : rules) {
                 change = change || normalizeFollow(r);
@@ -104,24 +114,32 @@ public class Grammar {
     private boolean normalizeFollow(Rule rule) {
         boolean change = false;
         for (int i = 0; i < rule.RHS.size(); i++) {
-
-            int prevSize = first.get(rule.RHS.get(i)).size();
-            first.get(rule.RHS.get(i)).addAll(first(new ArrayList<Symbol>(rule.RHS.subList(i + 1, rule.RHS.size()))));
-            if (first( new ArrayList<>(rule.RHS.subList(i + 1, rule.RHS.size())) ).contains(epsilon)){
-                first.get(rule.RHS.get(i)).addAll(first.get(rule.LHS));
+            if (rule.RHS.get(i).type != Type.NON_TERMINAL)
+                continue;
+            int prevSize = follow.get(rule.RHS.get(i)).size();
+            ArrayList<Symbol> a = new ArrayList<>(rule.RHS.subList(i + 1, rule.RHS.size()));
+            follow.get(rule.RHS.get(i)).addAll(first(a));
+            follow.get(rule.RHS.get(i)).remove(epsilon);
+            if (Objects.equals(rule.RHS.get(i).name, "Expression"))
+                System.out.println("                " + first(a));
+            if (first(a).contains(epsilon)){
+                follow.get(rule.RHS.get(i)).addAll(follow.get(rule.LHS));
             }
-            if (prevSize != first.get(rule.RHS.get(i)).size())
-                System.out.println(prevSize + " " + first.get(rule.RHS.get(i)).size());
-            change = change || (prevSize != first.get(rule.RHS.get(i)).size());
+//            if (prevSize != first.get(rule.RHS.get(i)).size())
+//                System.out.println(prevSize + " " + first.get(rule.RHS.get(i)).size());
+            change = change || (prevSize != follow.get(rule.RHS.get(i)).size());
         }
         return change;
     }
 
     public HashSet<Symbol> first(ArrayList<Symbol> sentence){
         HashSet<Symbol> ans = new HashSet<>();
+
         for (int i = 0; i < sentence.size(); i++) {
-            HashSet<Symbol> h = first.get(sentence.get(i));
+            HashSet<Symbol> h = new HashSet<>(first.get(sentence.get(i)));
             h.remove(epsilon);
+            ans.addAll(h);
+//            System.out.println("                            " + i + sentence.get(i) + first.get(sentence.get(i)) + "    " + h);
             if (!first.get(sentence.get(i)).contains(epsilon)){
                 return ans;
             }

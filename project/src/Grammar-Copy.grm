@@ -25,7 +25,7 @@
 16.	Statements -> ϵ
 17.	Statement -> { Statements }
 17.	Statement -> if ( GenExpression ) Statement else Statement
-17.	Statement -> while ( GenExpression ) Statement
+17.	Statement -> while ( GenExpression Statement )
 17.	Statement -> for ( Identifier = Integer ; Expression RelTerm1 ; Identifier += Integer ) Statement
 17.	Statement -> Identifier = GenExpression ;
 17.	Statement -> System . out . println ( GenExpression ) ;
