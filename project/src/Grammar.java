@@ -1,4 +1,3 @@
-import java.awt.image.AreaAveragingScaleFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -12,8 +11,8 @@ public class Grammar {
     private java.util.Scanner scanner;
     private HashMap<Integer, Rule> rules;
     private FileInputStream file;
-    ArrayList<Terminal> terminals;
-    private ArrayList<NonTerminal> nonTerminals;
+    private ArrayList<Element> terminals;
+    private ArrayList<Element> nonTerminals;
 
     Grammar(String string){
         try {
@@ -31,7 +30,7 @@ public class Grammar {
         nonTerminals = new ArrayList<>();
         while(scanner.hasNext()){
             scanner.next();
-            NonTerminal next = new NonTerminal(scanner.next());
+            Element next = new Element(scanner.next(),Type.NON_TERMINAL);
             if (!nonTerminals.contains(next))
                 nonTerminals.add(next);
             scanner.nextLine();
@@ -44,7 +43,7 @@ public class Grammar {
         while (scanner.hasNext()){
             scanner.next();
             String lhs = scanner.next();
-            if (getNonterminal(lhs) == null) {
+            if (getNonTerminal(lhs) == null) {
                 System.out.println("Undefined Non terminal in line " + (new Integer(index)).toString());
                 return;
             }
@@ -58,23 +57,23 @@ public class Grammar {
             rules.put(index, new Rule());
         }
 
-        for (NonTerminal n: nonTerminals) {
+        for (Element n: nonTerminals) {
             System.out.println(n.name);
         }
         System.out.println();
     }
 
 
-    private NonTerminal getNonterminal(String s){
-        for (NonTerminal n: nonTerminals) {
+    private Element getNonTerminal(String s){
+        for (Element n: nonTerminals) {
             if (Objects.equals(n.name, s))
                 return n;
         }
         return null;
     }
 
-    private Terminal getTerminal(String s){
-        for (Terminal t: terminals) {
+    private Element getTerminal(String s){
+        for (Element t: terminals) {
             if (Objects.equals(t.name, s))
                 return t;
         }
@@ -101,14 +100,22 @@ class Rule{
 class SententialForm{
     ArrayList<Element> elements;
 
+    SententialForm(String[] s){
+        elements = new ArrayList<>();
+    }
+}
 
+enum Type {
+    TERMINAL, NON_TERMINAL, ACTION_SYMBOL
 }
 
 class Element{
     String name;
+    Type type;
 
-    Element(String name){
+    Element(String name, Type type){
         this.name = name;
+        this.type = type;
     }
 
     @Override
@@ -116,26 +123,5 @@ class Element{
         if (!(obj instanceof Element))
             return false;
         return Objects.equals(((Element) obj).name, this.name);
-    }
-}
-
-class Terminal extends Element{
-
-    Terminal(String name) {
-        super(name);
-    }
-}
-
-class NonTerminal extends Element{
-
-    NonTerminal(String name) {
-        super(name);
-    }
-}
-
-class ActionSymbol extends Element{
-
-    ActionSymbol(String name) {
-        super(name);
     }
 }
