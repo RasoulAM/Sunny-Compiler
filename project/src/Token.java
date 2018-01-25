@@ -15,6 +15,12 @@ public class Token {
         return second;
     }
 
+
+    public String getComparable(){
+        return "";
+    }
+
+    
     @Override
     public String toString() {
         return "Token{" +
