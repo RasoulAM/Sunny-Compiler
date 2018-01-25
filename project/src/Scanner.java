@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class Scanner {
+
     // regex
     private static final  String letter = "[a-zA-Z]";
     private static final String digit = "[0-9]";
@@ -10,7 +11,10 @@ public class Scanner {
     private static final String other2 = "[^0-9]";
     private static final String other3 = "[^=]";
     private static final String saniOther = "(.|\\s)";
-    private static final String validChars = "[a-zA-Z0-9|+|-|&|<|,|*|/|\\s|(|)|{|}|;|.]";
+    private static final String validChars = "[a-zA-Z0-9|+|-|&|<|,|*|/|\\s|(|)|{|}|;|.|$|=]";
+    private static final String other4 = "[^\n]";
+    private static final String other5 = "[^*]";
+    private static final String other6 = "[^*/]";
     // keywords
     private static final ArrayList<String> keywords= new ArrayList<>();
     static {
@@ -97,7 +101,10 @@ public class Scanner {
         switch (currentState){
             case 0:
                 if (!currentChar.matches(validChars)){
-                    errorHandler.illigalLanguageCharacter(currentLineNumber, currentChar);
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
                 }else if (currentChar.matches(letter)){
                     currentState = 1;
                     lf++;
@@ -126,10 +133,18 @@ public class Scanner {
                 } else if (currentChar.matches("[-]") && !prevHasEffect){
                     currentState = 7;
                     lf++;
+                } else if (currentChar.matches("[/]")){
+                    currentState = 13;
+                    lf ++;
                 }
                 break;
             case 1:
-                if (currentChar.matches(letter) || currentChar.matches(digit)){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                }else if (currentChar.matches(letter) || currentChar.matches(digit)){
                     currentState = 1;
                     lf++;
                 } else if(currentChar.matches(other1)){
@@ -142,13 +157,28 @@ public class Scanner {
                 done = true;
                 break;
             case 3:
-                if (currentChar.matches(digit)){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                }else if (currentChar.matches(digit)){
                     currentState = 4;
                     lf++;
+                } else {
+                    errorHandler.illegalNumberSyntax(currentLineNumber);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
                 }
                 break;
             case 4:
-                if (currentChar.matches(digit)){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                }else if (currentChar.matches(digit)){
                     currentState = 4;
                     lf ++;
                 } else if (currentChar.matches(other2)){
@@ -157,7 +187,12 @@ public class Scanner {
                 }
                 break;
             case 5:
-                if (currentChar.matches(other3)){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                }else if (currentChar.matches(other3)){
                     currentState = 2;
                     makeToken(2);
                 } else if (currentChar.matches("[=]")){
@@ -166,25 +201,45 @@ public class Scanner {
                 }
                 break;
             case 6:
-                if (currentChar.matches(saniOther)){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                }else if (currentChar.matches(saniOther)){
                     currentState = 2;
                     makeToken(2);
                 }
                 break;
             case 7:
-                if (currentChar.matches(saniOther)){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                }else if(currentChar.matches(saniOther)){
                     currentState = 2;
                     makeToken(2);
                 }
                 break;
             case 8:
-                if (currentChar.matches(saniOther)){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                }else if (currentChar.matches(saniOther)){
                     currentState = 2;
                     makeToken(2);
                 }
                 break;
             case 9:
-                if (currentChar.matches(other3)){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                }else if (currentChar.matches(other3)){
                     currentState = 2;
                     makeToken(2);
                 } else if (currentChar.matches("[=]")){
@@ -193,22 +248,101 @@ public class Scanner {
                 }
                 break;
             case 10:
-                if (currentChar.matches(saniOther)){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                }else if (currentChar.matches(saniOther)){
                     currentState = 2;
                     makeToken(2);
                 }
                 break;
             case 11:
-                if (currentChar.matches("[&]")){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                }else if (currentChar.matches("[&]")){
                     currentState = 12;
                     lf ++;
+                } else {
+                    errorHandler.illegalAndSyntax(currentLineNumber);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
                 }
                 break;
             case 12:
-                if (currentChar.matches(saniOther)){
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                }else if (currentChar.matches(saniOther)){
                     currentState = 2;
                     makeToken(2);
                 }
+                break;
+            case 13:
+                if (currentChar.matches(other6)){
+                    errorHandler.illigalCommentSyntax(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                } else if (currentChar.matches("[*]")){
+                    currentState = 15;
+                    lf++;
+                } else if (currentChar.matches("[/]")){
+                    currentState = 14;
+                    lf++;
+                }
+                break;
+            case 14:
+                if (currentChar.matches(other4)){
+                    currentState = 14;
+                    lf++;
+                } else if (currentChar.matches("[\n]")){
+                    currentState = 18;
+                    lb = lf;
+                }
+                break;
+            case 15:
+                if (currentChar.matches(other5)){
+                    currentState = 15;
+                    lf++;
+                } else if(currentChar.matches("[*]")){
+                    currentState = 16;
+                    lf++;
+                }
+                break;
+            case 16:
+                if (currentChar.matches("[*]")){
+                    currentState = 16;
+                    lf++;
+                } else if(currentChar.matches(other6)){
+                    currentState = 15;
+                    lf++;
+                } else if (currentChar.matches("[/]")){
+                    currentState = 17;
+                    lf++;
+                }
+                break;
+            case 17:
+                if (!currentChar.matches(validChars)){
+                    errorHandler.illegalLanguageCharacter(currentLineNumber, currentChar);
+                    lf++;
+                    lb = lf;
+                    currentState = 0;
+                } else if (currentChar.matches(saniOther)){
+                    currentState = 18;
+                    lb = lf;
+                }
+                break;
+            case 18:
+                currentState = 0;
+                done = false;
                 break;
         }
     }
@@ -223,6 +357,7 @@ public class Scanner {
                     currentToken = new Token("keyword", lookahead);
                 } else {
                     currentToken = new Token("identifier", currentSymbolTable.tokenHandler(lookahead));
+//                  System.out.println(lookahead);
                 }
                 prevHasEffect = false;
                 break;
