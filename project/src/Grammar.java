@@ -1,5 +1,4 @@
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 import java.util.Scanner;
 
@@ -18,8 +17,6 @@ public class Grammar {
     static Symbol epsilon;
     static Symbol endOfFile;
 
-
-
     HashMap<Symbol, HashSet<Symbol> > first;
     HashMap<Symbol, HashSet<Symbol> > follow;
 
@@ -27,7 +24,6 @@ public class Grammar {
         try {
             file = new FileInputStream("project/src/Grammar.grm");
             initialize_grammar();
-
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
         }
@@ -39,8 +35,80 @@ public class Grammar {
     }
 
     public void initializeFirstsAndFollows(){
+        // TODO: 1/26/2018 Write the loadConfigFile function to be able to use the config file
+//        File config = new File("project/src/Grammar.cfg");
+//        if (config.exists()){
+//            loadConfigFile();
+//            return;
+//        }
         setFirsts();
         setFollows();
+//        try {
+//            setConfigFile();
+//        } catch (IOException e) {
+//            System.out.println("Error setting config file");
+//        }
+    }
+
+    private void loadConfigFile() {
+        Scanner s;
+        try {
+            s = new Scanner(new FileInputStream("project/src/Grammar.cfg"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        scanner.nextLine();
+        scanner.nextLine();
+        scanner.nextLine();
+        scanner.nextLine();
+
+
+    }
+
+    private void setConfigFile() throws IOException {
+        BufferedWriter bw = null;
+        bw = new BufferedWriter(new FileWriter("project/src/Grammar.cfg"));
+        bw.write(nonTerminals.size());
+        bw.write("\n");
+        for (Symbol s: nonTerminals) {
+            bw.write(s.name + " ");
+        }
+        bw.write("\n");
+        bw.write(terminals.size());
+        bw.write("\n");
+        for (Symbol s: terminals) {
+            bw.write(s.name + " ");
+        }
+        bw.write("\n");
+        for (Symbol s: terminals) {
+            bw.write(s.name + " : ");
+            for (Symbol f:first.get(s)) {
+                bw.write(f.name + " ");
+            }
+            bw.write("\n");
+        }
+        for (Symbol s: nonTerminals) {
+            bw.write(s.name + " : ");
+            for (Symbol f:first.get(s)) {
+                bw.write(f.name + " ");
+            }
+            bw.write("\n");
+        }
+//        for (Symbol s: terminals) {
+//            bw.write(s.name + " : ");
+//            for (Symbol f:follow.get(s)) {
+//                bw.write(f.name + " ");
+//            }
+//            bw.write("\n");
+//        }
+        for (Symbol s: nonTerminals) {
+            bw.write(s.name + " : ");
+            for (Symbol f:follow.get(s)) {
+                bw.write(f.name + " ");
+            }
+            bw.write("\n");
+        }
+        bw.close();
     }
 
     public void setFirsts(){
@@ -70,10 +138,12 @@ public class Grammar {
             System.out.println(nonTerminals.get(i).toString() + " " + first.get(nonTerminals.get(i)).toString());
         }
     }
-    
+
     private boolean normalizeFirst(Rule rule){
         int initialSize = first.get(rule.LHS).size();
         for (int i = 0; i < rule.RHS.size(); i++) {
+            if (rule.RHS.get(i).type == Type.ACTION_SYMBOL)
+                continue;
             HashSet<Symbol> s = new HashSet<>(first.get(rule.RHS.get(i)));
             s.remove(epsilon);
             first.get(rule.LHS).addAll(s);
@@ -89,12 +159,6 @@ public class Grammar {
         HashSet<Symbol> h = new HashSet<>();
         h.add(endOfFile);
         follow.put(startSymbol, h);
-
-
-//        System.out.println(follow.get(nonTerminals.get(0)));
-//        System.out.println(endOfFile);
-
-
 
         for (Symbol s : nonTerminals) {
             follow.put(s,new HashSet<>());
@@ -136,6 +200,8 @@ public class Grammar {
         HashSet<Symbol> ans = new HashSet<>();
 
         for (int i = 0; i < sentence.size(); i++) {
+            if (sentence.get(i).type == Type.ACTION_SYMBOL)
+                continue;
             HashSet<Symbol> h = new HashSet<>(first.get(sentence.get(i)));
             h.remove(epsilon);
             ans.addAll(h);
@@ -174,7 +240,6 @@ public class Grammar {
         }
         int index = 1;
         while (scanner.hasNext()){
-            // TODO: 1/25/2018 handle action symbols
             scanner.next();
             String lhs = scanner.next();
             if (getNonTerminal(lhs) == null) {
@@ -191,15 +256,13 @@ public class Grammar {
             for (String s: rhs) {
                 if (s.trim().length() == 0)
                     continue;
-                if (getNonTerminal(s) != null){
-                    newRHS.add(getNonTerminal(s));
-                }
-                else if (getTerminal(s) != null){
-                    newRHS.add(getTerminal(s));
+                if (getSymbol(s) != null){
+                    newRHS.add(getSymbol(s));
                 }
                 else {
-                    Symbol t = new Symbol(s, Type.TERMINAL);
-                    terminals.add(t);
+                    Symbol t = new Symbol(s);
+                    if (t.type == Type.TERMINAL)
+                        terminals.add(t);
                     newRHS.add(t);
                 }
             }
@@ -233,6 +296,18 @@ public class Grammar {
         return null;
     }
 
+    Symbol getSymbol(String s){
+        for (Symbol n: nonTerminals) {
+            if (Objects.equals(n.name, s))
+                return n;
+        }
+        for (Symbol t: terminals) {
+            if (Objects.equals(t.name, s))
+                return t;
+        }
+        return null;
+    }
+
     public Rule getRule(Integer num){
         return rules.get(num);
     }
@@ -241,6 +316,22 @@ public class Grammar {
 
     public static void main(String[] args) {
         new Grammar();
+//        FileWriter file = null;
+//        try {
+//            file = new FileWriter("new.txt");
+//        } catch (IOException e) {
+//            System.out.println("Here");
+//            return;
+//        }
+//        BufferedWriter bufferedWriter = new BufferedWriter(file);
+//        String s = "Hello";
+//        try {
+//            bufferedWriter.write(s);
+//            bufferedWriter.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
     }
 
 
@@ -281,6 +372,18 @@ class Symbol {
     Symbol(String name, Type type){
         this.name = name;
         this.type = type;
+        if (this.name.charAt(0) == '#'){
+            this.type = Type.ACTION_SYMBOL;
+        }
+    }
+
+    Symbol(String name){
+        this.name = name;
+        if (this.name.charAt(0) == '#'){
+            this.type = Type.ACTION_SYMBOL;
+        }
+        else
+            this.type = Type.TERMINAL;
     }
 
     @Override
@@ -293,5 +396,9 @@ class Symbol {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    public boolean is(String name){
+        return Objects.equals(this.name, name);
     }
 }

@@ -21,14 +21,30 @@ public class ParseTable {
         initializeParseTable();
     }
 
+
+    // TODO: 1/26/2018 consider when epsilon in first(alpha)
     private void initializeParseTable(){
         grammar.initializeFirstsAndFollows();
         for (Rule r : grammar.rules) {
+            ArrayList<Symbol> aaa = r.RHS;
+            if ((Objects.equals(r.RHS.get(0).name, "ϵ"))){
+                aaa = new ArrayList<>(r.RHS);
+                aaa.remove(0);
+            }
             for (Symbol s : grammar.first(r.RHS)) {
-//                if (Objects.equals(s.name, "ϵ"))
-//                    continue;
-                parseTable.put(new Pair<>(r.LHS, s), r.RHS);
-                System.out.println("In: " + r.LHS + ", " + s + " " + r.RHS);
+//                if (r.RHS.size() == 1 && Objects.equals(r.RHS.get(0).name, "ϵ")) {
+//                    parseTable.put(new Pair<>(r.LHS, s), new ArrayList<Symbol>());
+//                    System.out.println("In1: " + r.LHS + ", " + s + " " + r.RHS);
+//                }
+//                else {
+//                }
+                parseTable.put(new Pair<>(r.LHS, s), aaa);
+                System.out.println("In2: " + r.LHS + ", " + s + " " + aaa);
+            }
+            if (grammar.first(r.RHS).contains(grammar.epsilon)){
+                for (Symbol s : grammar.follow.get(r.LHS)){
+                    parseTable.put(new Pair<>(r.LHS, s), aaa);
+                }
             }
         }
 //        Rule rr = grammar.getRule(0);

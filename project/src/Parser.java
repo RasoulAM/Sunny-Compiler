@@ -64,7 +64,8 @@ public class Parser {
                     updateStack(s);
                     break;
                 case ACTION_SYMBOL:
-                    doAction();
+                    parseStack.pop();
+//                    doAction();
                     break;
             }
         }
