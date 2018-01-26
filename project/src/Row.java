@@ -41,4 +41,14 @@ public class Row {
     public ArrayList<String> getFunctionArgsType() {
         return functionArgsType;
     }
+
+    @Override
+    public String toString() {
+        return "Row{" +
+                "name='" + name + '\'' +
+                ", address=" + address +
+                ", type='" + type + '\'' +
+                ", functionArgsType=" + functionArgsType +
+                '}';
+    }
 }
