@@ -11,7 +11,7 @@ public class Scanner {
     private static final String other2 = "[^0-9]";
     private static final String other3 = "[^=]";
     private static final String saniOther = "(.|\\s)";
-    private static final String validChars = "[a-zA-Z0-9|+|-|&|<|,|*|/|\\s|(|)|{|}|;|.|$|=]";
+    private static final String validChars = "[a-zA-Z0-9|+|\\-|&|<|,|*|/|\\s|(|)|{|}|;|.|$|=]";
     private static final String other4 = "[^\n]";
     private static final String other5 = "[^*]";
     private static final String other6 = "[^*/]";

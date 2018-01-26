@@ -24,9 +24,9 @@
 @16.	Statements -> Statement Statements
 @16.	Statements -> ϵ
 %17.	Statement -> { Statements }
-%17.	Statement -> if ( GenExpression ) #save Statement #save #jpf else Statement #fill
+@17.	Statement -> if ( GenExpression ) #save Statement #save #jpf else Statement #fill
 %17.	Statement -> while ( #push_line GenExpression ) #save Statement #while
-%17.	Statement -> for ( #pid #pid Identifier = Integer #assign ; #push_line Expression RelTerm1 ; Identifier += Integer ) #save Statement #step #for
+%17.	Statement -> for ( #pid #pid Identifier = Integer #assign ; #push_line Expression RelTerm1 ; Identifier += Integer ) #save Statement #step_for
 @17.	Statement -> #pid Identifier = GenExpression #assign ;
 %17.	Statement -> System . out . println ( GenExpression #print ) ;
 @18.	GenExpression -> Expression GenExpression1
@@ -42,9 +42,9 @@
 @24.	Term1 -> ϵ
 %25.	Factor -> ( Expression )
 @25.	Factor -> #pid Identifier Factor1
-%25.	Factor -> #push_bool true
-%25.	Factor -> #push_bool false
-%25.	Factor -> Integer
+@25.	Factor -> #push_bool true
+@25.	Factor -> #push_bool false
+@25.	Factor -> Integer
 %26.	Factor1 -> #push_scope . #push Identifier Factor2
 @26.	Factor1 -> ϵ
 %27.	Factor2 -> ( #set_counter Arguments ) #pop_counter #push_return_value_address
@@ -58,5 +58,5 @@
 31.	Argument -> , GenExpression Argument
 31.	Argument -> ϵ
 @32.	Identifier -> identifier
-33.	Integer -> #push_number integer
+@33.	Integer -> #push_number integer
 
