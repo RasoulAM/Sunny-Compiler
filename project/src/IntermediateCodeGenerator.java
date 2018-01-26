@@ -7,7 +7,7 @@ public class IntermediateCodeGenerator {
 
 
     String[] programBlock = new String[100];
-    int index = 0;
+    private Integer index = 0;
     int variableAddress = 100;
     int baseTempAddress = 500;
 
@@ -37,7 +37,17 @@ public class IntermediateCodeGenerator {
 
     }
 
+    public void writeWithDst(int dst, String command, String par1, String par2, String par3){
+        String ans = "(" + command + ", " + par1 + ", " + par2 + ", " + par3 + ")";
+        programBlock[dst] = ans;
+    }
+
+    public void incIndex(){
+        index++;
+    }
 
 
-
+    public Integer getIndex() {
+        return index;
+    }
 }

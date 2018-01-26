@@ -3,9 +3,13 @@ public class Cls {
 		int b;
 		int a;
 		int c;
-		b = 1;
+		b = false;
 		a = 2;
 		c = a + b;
+		if ( b )
+		    c = a + b;
+		else
+		    a = b;
 	} 
 } 
 EOF

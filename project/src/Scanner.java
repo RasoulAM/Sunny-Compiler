@@ -408,6 +408,10 @@ public class Scanner {
 
     }
 
+    public SymbolTable getCurrentSymbolTable() {
+        return currentSymbolTable;
+    }
+
     public void setCurrentSymbolTable(SymbolTable currentSymbolTable) {
         this.currentSymbolTable = currentSymbolTable;
     }

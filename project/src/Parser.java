@@ -7,7 +7,7 @@ public class Parser {
 
     ParseTable parseTable;
     SymbolTable parentTable;
-    SymbolTable currentSymbolTable;
+//    SymbolTable currentSymbolTable;
     ArrayList<SymbolTable> scopes;
     Stack<Symbol> parseStack;
     ErrorHandler errorHandler;
@@ -25,7 +25,7 @@ public class Parser {
     Parser(){
         parseTable = new ParseTable();
         parentTable = new SymbolTable("package");
-        currentSymbolTable = parentTable;
+//        scanner.setCurrentSymbolTable(parentTable);
         parseStack = new Stack<>();
         scopes = new ArrayList<>();
         errorHandler = new ErrorHandler(parseStack);
@@ -35,6 +35,8 @@ public class Parser {
 
         parseStack.push(grammar.startSymbol);
         startParse();
+
+
     }
 
     public static void main(String[] args) {
@@ -51,16 +53,17 @@ public class Parser {
 //    private void func(){
         System.out.println(currentToken);
         while(true){
-            String s = currentToken.getFirst();
+            String s;
             if (Objects.equals(currentToken.getFirst(), "keyword"))
                 s = currentToken.getSecond();
             else
                 s = currentToken.getFirst();
+            if (parseStack.empty())
+                break;
             System.out.println(parseStack);
             System.out.println("Top: " + parseStack.peek().toString());
             System.out.println("Lookahead: " + s);
-            if (parseStack.empty())
-                break;
+
             switch (parseStack.peek().type){
                 case TERMINAL:
                     match(s);
@@ -73,8 +76,11 @@ public class Parser {
                     doAction();
                     break;
             }
-        }
 
+        }
+        for (int i = 0; i < intermediateCodeGenerator.getIndex(); i++){
+            System.out.println(intermediateCodeGenerator.programBlock[i]);
+        }
     }
 
     private void updateStack(String lookahead) {
@@ -95,7 +101,8 @@ public class Parser {
 
         if (Objects.equals(lookahead, parseStack.peek().name)){
             parseStack.pop();
-            currentToken = scanner.getNextToken();
+            if (!Objects.equals(lookahead, "EOF"))
+                currentToken = scanner.getNextToken();
         }
         else
             error(2);
@@ -113,23 +120,22 @@ public class Parser {
                 scanner.setDefinition(false);
                 break;
             case "#put_in_current_table":
-                System.out.println(currentToken.getSecond());
                 int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
-                row = currentSymbolTable.getRows().get(rowIndex);
+                row = scanner.getCurrentSymbolTable().getRows().get(rowIndex);
                 row.setType("class");
                 break;
             case "#make_symbol_table":
 //                System.out.println(currentToken.getSecond());
                 SymbolTable s = new SymbolTable(currentToken.getSecond().split(" ")[1]);
-                s.setParent(currentSymbolTable);
+                s.setParent(scanner.getCurrentSymbolTable());
                 intermediateCodeGenerator.scopeStack.push(s);
                 scopes.add(s);
                 break;
             case "#scope_in":
-                currentSymbolTable = intermediateCodeGenerator.scopeStack.pop();
+                scanner.setCurrentSymbolTable(intermediateCodeGenerator.scopeStack.pop());
                 break;
             case "#scope_out":
-                currentSymbolTable = currentSymbolTable.getParent();
+                scanner.setCurrentSymbolTable(scanner.getCurrentSymbolTable().getParent());
                 break;
             case "#push":
                 intermediateCodeGenerator.semanticStack.push(currentToken.getSecond());
@@ -137,15 +143,14 @@ public class Parser {
             case "#set_type_address":
                 String type = (String) intermediateCodeGenerator.semanticStack.pop();
                 index = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
-
-                row = currentSymbolTable.getRows().get(index);
+                row = scanner.getCurrentSymbolTable().getRows().get(index);
                 row.setType(type);
                 row.setAddress(intermediateCodeGenerator.getVariableAddress());
                 break;
             case "#pid":
                 index = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
-                row = currentSymbolTable.getRows().get(index);
-                intermediateCodeGenerator.semanticStack.push(row.getAddress());
+                row = scanner.getCurrentSymbolTable().getRows().get(index);
+                intermediateCodeGenerator.semanticStack.push(row.getAddress().toString());
                 break;
             case "#assign":
                 assign();
@@ -156,24 +161,66 @@ public class Parser {
             case "#sub":
                 sub();
                 break;
-
-
-
+            case "#push_number":
+                push_number();
+                break;
+            case "#push_bool":
+                push_bool();
+                break;
+            case "#save":
+                save();
+                break;
+            case "#jpf":
+                jpf();
+                break;
+            case "#fill":
+                fill();
+                break;
         }
     }
 
+    private void fill() {
+        Integer pbIndex = (int) intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 1);
+        intermediateCodeGenerator.writeWithDst(pbIndex,"JP",intermediateCodeGenerator.getIndex().toString(),"","");
+        intermediateCodeGenerator.semanticStack.pop();
+        intermediateCodeGenerator.semanticStack.pop();
+        intermediateCodeGenerator.semanticStack.pop();
+    }
+
+    private void jpf() {
+        Integer pbIndex = (int) intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 2);
+        String dst = (String) intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 3);
+        intermediateCodeGenerator.writeWithDst(pbIndex, "JPF", dst, intermediateCodeGenerator.getIndex().toString(),"");
+    }
+
+    private void save() {
+        intermediateCodeGenerator.semanticStack.push(intermediateCodeGenerator.getIndex());
+        intermediateCodeGenerator.incIndex();
+    }
+
+    private void push_bool() {
+        String a = "0";
+        if (currentToken.getSecond().equals("true"))
+            a = "1";
+        intermediateCodeGenerator.semanticStack.push("#" + a);
+    }
+
+    private void push_number() {
+        intermediateCodeGenerator.semanticStack.push("#" + currentToken.getSecond());
+    }
+
     private void assign() {
-        Integer src = (int) intermediateCodeGenerator.semanticStack.pop();
-        Integer dst = (int) intermediateCodeGenerator.semanticStack.pop();
-        intermediateCodeGenerator.write("ASSIGN", src.toString(), dst.toString(), "");
+        String src = (String) intermediateCodeGenerator.semanticStack.pop();
+        String dst = (String) intermediateCodeGenerator.semanticStack.pop();
+        intermediateCodeGenerator.write("ASSIGN", src, dst, "");
     }
 
     private void add(){
-        Integer src1 = (int) intermediateCodeGenerator.semanticStack.pop();
-        Integer src2 = (int) intermediateCodeGenerator.semanticStack.pop();
+        String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
+        String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
         Integer dst = intermediateCodeGenerator.getTemp();
-        intermediateCodeGenerator.write("ADD", src1.toString(), src2.toString(), dst.toString());
-        intermediateCodeGenerator.semanticStack.push(dst);
+        intermediateCodeGenerator.write("ADD", src1, src2, dst.toString());
+        intermediateCodeGenerator.semanticStack.push(dst.toString());
     }
 
     private void sub(){
@@ -181,7 +228,7 @@ public class Parser {
         Integer src2 = (int) intermediateCodeGenerator.semanticStack.pop();
         Integer dst = intermediateCodeGenerator.getTemp();
         intermediateCodeGenerator.write("SUB", src2.toString(), src1.toString(), dst.toString());
-        intermediateCodeGenerator.semanticStack.push(dst);
+        intermediateCodeGenerator.semanticStack.push(dst.toString());
     }
 
 
