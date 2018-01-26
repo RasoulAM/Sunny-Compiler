@@ -103,6 +103,8 @@ public class Parser {
 
     private void doAction() {
         Symbol prevTopOfStack = parseStack.pop();
+        int index;
+        Row row;
         switch (prevTopOfStack.name){
             case "#set_declaration":
                 scanner.setDefinition(true);
@@ -113,11 +115,11 @@ public class Parser {
             case "#put_in_current_table":
                 System.out.println(currentToken.getSecond());
                 int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
-                Row row = currentSymbolTable.getRows().get(rowIndex);
+                row = currentSymbolTable.getRows().get(rowIndex);
                 row.setType("class");
                 break;
             case "#make_symbol_table":
-                System.out.println(currentToken.getSecond());
+//                System.out.println(currentToken.getSecond());
                 SymbolTable s = new SymbolTable(currentToken.getSecond().split(" ")[1]);
                 s.setParent(currentSymbolTable);
                 intermediateCodeGenerator.scopeStack.push(s);
@@ -129,11 +131,58 @@ public class Parser {
             case "#scope_out":
                 currentSymbolTable = currentSymbolTable.getParent();
                 break;
+            case "#push":
+                intermediateCodeGenerator.semanticStack.push(currentToken.getSecond());
+                break;
+            case "#set_type_address":
+                String type = (String) intermediateCodeGenerator.semanticStack.pop();
+                index = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
+
+                row = currentSymbolTable.getRows().get(index);
+                row.setType(type);
+                row.setAddress(intermediateCodeGenerator.getVariableAddress());
+                break;
+            case "#pid":
+                index = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
+                row = currentSymbolTable.getRows().get(index);
+                intermediateCodeGenerator.semanticStack.push(row.getAddress());
+                break;
+            case "#assign":
+                assign();
+                break;
+            case "#add":
+                add();
+                break;
+            case "#sub":
+                sub();
+                break;
+
+
 
         }
     }
 
+    private void assign() {
+        Integer src = (int) intermediateCodeGenerator.semanticStack.pop();
+        Integer dst = (int) intermediateCodeGenerator.semanticStack.pop();
+        intermediateCodeGenerator.write("ASSIGN", src.toString(), dst.toString(), "");
+    }
 
+    private void add(){
+        Integer src1 = (int) intermediateCodeGenerator.semanticStack.pop();
+        Integer src2 = (int) intermediateCodeGenerator.semanticStack.pop();
+        Integer dst = intermediateCodeGenerator.getTemp();
+        intermediateCodeGenerator.write("ADD", src1.toString(), src2.toString(), dst.toString());
+        intermediateCodeGenerator.semanticStack.push(dst);
+    }
+
+    private void sub(){
+        Integer src1 = (int) intermediateCodeGenerator.semanticStack.pop();
+        Integer src2 = (int) intermediateCodeGenerator.semanticStack.pop();
+        Integer dst = intermediateCodeGenerator.getTemp();
+        intermediateCodeGenerator.write("SUB", src2.toString(), src1.toString(), dst.toString());
+        intermediateCodeGenerator.semanticStack.push(dst);
+    }
 
 
     private void error(int code){
