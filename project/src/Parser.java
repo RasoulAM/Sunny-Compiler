@@ -20,14 +20,18 @@ public class Parser {
 
     Token currentToken;
 
+    IntermediateCodeGenerator intermediateCodeGenerator;
+
     Parser(){
         parseTable = new ParseTable();
         parentTable = new SymbolTable("package");
+        currentSymbolTable = parentTable;
         parseStack = new Stack<>();
         scopes = new ArrayList<>();
         errorHandler = new ErrorHandler(parseStack);
         scanner = new Scanner(programSrc, parentTable, errorHandler);
         grammar = new Grammar();
+        intermediateCodeGenerator = new IntermediateCodeGenerator();
 
         parseStack.push(grammar.startSymbol);
         startParse();
@@ -107,8 +111,23 @@ public class Parser {
                 scanner.setDefinition(false);
                 break;
             case "#put_in_current_table":
-                int rowIndex = Integer.parseInt(currentToken.getComparable().split(" ")[2]);
-                currentSymbolTable.getRows().get(rowIndex);
+                System.out.println(currentToken.getSecond());
+                int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
+                Row row = currentSymbolTable.getRows().get(rowIndex);
+                row.setType("class");
+                break;
+            case "#make_symbol_table":
+                System.out.println(currentToken.getSecond());
+                SymbolTable s = new SymbolTable(currentToken.getSecond().split(" ")[1]);
+                s.setParent(currentSymbolTable);
+                intermediateCodeGenerator.scopeStack.push(s);
+                scopes.add(s);
+                break;
+            case "#scope_in":
+                currentSymbolTable = intermediateCodeGenerator.scopeStack.pop();
+                break;
+            case "#scope_out":
+                currentSymbolTable = currentSymbolTable.getParent();
                 break;
 
         }
