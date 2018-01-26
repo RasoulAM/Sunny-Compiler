@@ -5,7 +5,7 @@ import java.util.Stack;
 public class Scanner {
 
     // regex
-    private static final  String letter = "[a-zA-Z]";
+    private static final String letter = "[a-zA-Z]";
     private static final String digit = "[0-9]";
     private static final String other1 = "[^a-zA-Z0-9]";
     private static final String other2 = "[^0-9]";
@@ -68,6 +68,7 @@ public class Scanner {
     // for keeping line
     private int currentLineNumber = 1;
     private int prevLf = 0;
+    private boolean isDefinition = false;
 
     //constructor
     public Scanner(String programAddress, SymbolTable currentSymbolTable, ErrorHandler errorHandler){
@@ -287,7 +288,7 @@ public class Scanner {
                 break;
             case 13:
                 if (currentChar.matches(other6)){
-                    errorHandler.illigalCommentSyntax(currentLineNumber, currentChar);
+                    errorHandler.illegalCommentSyntax(currentLineNumber, currentChar);
                     lf++;
                     lb = lf;
                     currentState = 0;
@@ -356,7 +357,8 @@ public class Scanner {
                 if (keywords.contains(lookahead)){
                     currentToken = new Token("keyword", lookahead);
                 } else {
-                    currentToken = new Token("identifier", currentSymbolTable.tokenHandler(lookahead));
+                    currentToken = new Token("identifier",
+                            currentSymbolTable.tokenHandler(lookahead, isDefinition, errorHandler, currentLineNumber));
 //                  System.out.println(lookahead);
                 }
                 prevHasEffect = false;
@@ -410,8 +412,14 @@ public class Scanner {
         this.currentSymbolTable = currentSymbolTable;
     }
 
+    public void setDefinition(boolean definition) {
+        isDefinition = definition;
+    }
+
+
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner("src/sample.txt", new SymbolTable(), new ErrorHandler(new Stack<Symbol>()));
+        Scanner scanner = new Scanner("src/sample.txt", new SymbolTable("a"), new ErrorHandler(new Stack<Symbol>()));
         for (int i = 0; i < 100; i++) {
             scanner.getNextToken();
             System.out.println(scanner.currentToken + " "+ scanner.currentLineNumber);

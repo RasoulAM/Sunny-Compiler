@@ -23,8 +23,18 @@ public class ErrorHandler {
                 ". Ooops There is just single ampersand(&).");
     }
 
-    public void illigalCommentSyntax(int lineNumber, String character){
+    public void illegalCommentSyntax(int lineNumber, String character){
         System.out.println("Scanning Error fount at line: "+lineNumber+
         ". Written character ("+character +")"+" is not allowed in comment syntax.");
+    }
+
+    public void duplicateDefinition(int lineNumber, String variableName){
+        System.out.println("Variable named "+variableName+" on line: " + lineNumber+
+                " had been defined before.");
+    }
+
+    public void undefinedVariable(int lineNumber, String variableName){
+        System.out.println("Variable named "+ variableName + " on line: " + lineNumber+
+        " is undefined. ");
     }
 }
