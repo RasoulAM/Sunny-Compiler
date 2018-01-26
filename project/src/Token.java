@@ -17,7 +17,11 @@ public class Token {
 
 
     public String getComparable(){
-        return "";
+        if (first.equals("keyword") || first.equals("identifier")){
+            return second;
+        } else {
+            return first;
+        }
     }
 
 
