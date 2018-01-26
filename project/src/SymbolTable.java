@@ -12,7 +12,7 @@ public class SymbolTable {
     public String searchThis(String name){
         for (int i = 0; i < rows.size(); i++) {
             if (rows.get(i).getName().equals(name)){
-                return this.name + " " + rows.get(i).getName();
+                return this.name + " " + rows.get(i).getName() + " " + i;
             }
         }
         return null;
