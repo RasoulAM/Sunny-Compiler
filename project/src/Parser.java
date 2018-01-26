@@ -7,6 +7,7 @@ public class Parser {
 
     ParseTable parseTable;
     SymbolTable parentTable;
+    SymbolTable currentSymbolTable;
     ArrayList<SymbolTable> scopes;
     Stack<Symbol> parseStack;
     ErrorHandler errorHandler;
@@ -21,7 +22,7 @@ public class Parser {
 
     Parser(){
         parseTable = new ParseTable();
-        parentTable = new SymbolTable("Ammeye Sani");
+        parentTable = new SymbolTable("package");
         parseStack = new Stack<>();
         scopes = new ArrayList<>();
         errorHandler = new ErrorHandler(parseStack);
@@ -64,8 +65,8 @@ public class Parser {
                     updateStack(s);
                     break;
                 case ACTION_SYMBOL:
-                    parseStack.pop();
-//                    doAction();
+//                    parseStack.pop();
+                    doAction();
                     break;
             }
         }
@@ -99,12 +100,17 @@ public class Parser {
     private void doAction() {
         Symbol prevTopOfStack = parseStack.pop();
         switch (prevTopOfStack.name){
-            case "#set_definition":
-
+            case "#set_declaration":
+                scanner.setDefinition(true);
                 break;
-            case "#b":
-
+            case "#reset_declaration":
+                scanner.setDefinition(false);
                 break;
+            case "#put_in_current_table":
+                int rowIndex = Integer.parseInt(currentToken.getComparable().split(" ")[2]);
+                currentSymbolTable.getRows().get(rowIndex);
+                break;
+
         }
     }
 
