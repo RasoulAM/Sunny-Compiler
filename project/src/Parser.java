@@ -7,6 +7,7 @@ public class Parser {
 
     ParseTable parseTable;
     SymbolTable parentTable;
+    SymbolTable currentSymbolTable;
     ArrayList<SymbolTable> scopes;
     Stack<Symbol> parseStack;
     ErrorHandler errorHandler;
@@ -19,14 +20,18 @@ public class Parser {
 
     Token currentToken;
 
+    IntermediateCodeGenerator intermediateCodeGenerator;
+
     Parser(){
         parseTable = new ParseTable();
-        parentTable = new SymbolTable("Ammeye Sani");
+        parentTable = new SymbolTable("package");
+        currentSymbolTable = parentTable;
         parseStack = new Stack<>();
         scopes = new ArrayList<>();
         errorHandler = new ErrorHandler(parseStack);
         scanner = new Scanner(programSrc, parentTable, errorHandler);
         grammar = new Grammar();
+        intermediateCodeGenerator = new IntermediateCodeGenerator();
 
         parseStack.push(grammar.startSymbol);
         startParse();
@@ -64,8 +69,8 @@ public class Parser {
                     updateStack(s);
                     break;
                 case ACTION_SYMBOL:
-                    parseStack.pop();
-//                    doAction();
+//                    parseStack.pop();
+                    doAction();
                     break;
             }
         }
@@ -99,12 +104,32 @@ public class Parser {
     private void doAction() {
         Symbol prevTopOfStack = parseStack.pop();
         switch (prevTopOfStack.name){
-            case "#set_definition":
-
+            case "#set_declaration":
+                scanner.setDefinition(true);
                 break;
-            case "#b":
-
+            case "#reset_declaration":
+                scanner.setDefinition(false);
                 break;
+            case "#put_in_current_table":
+                System.out.println(currentToken.getSecond());
+                int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
+                Row row = currentSymbolTable.getRows().get(rowIndex);
+                row.setType("class");
+                break;
+            case "#make_symbol_table":
+                System.out.println(currentToken.getSecond());
+                SymbolTable s = new SymbolTable(currentToken.getSecond().split(" ")[1]);
+                s.setParent(currentSymbolTable);
+                intermediateCodeGenerator.scopeStack.push(s);
+                scopes.add(s);
+                break;
+            case "#scope_in":
+                currentSymbolTable = intermediateCodeGenerator.scopeStack.pop();
+                break;
+            case "#scope_out":
+                currentSymbolTable = currentSymbolTable.getParent();
+                break;
+
         }
     }
 
