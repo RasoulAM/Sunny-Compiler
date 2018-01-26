@@ -21,7 +21,7 @@ public class Parser {
 
     Parser(){
         parseTable = new ParseTable();
-        parentTable = new SymbolTable();
+        parentTable = new SymbolTable("Ammeye Sani");
         parseStack = new Stack<>();
         scopes = new ArrayList<>();
         errorHandler = new ErrorHandler(parseStack);
@@ -99,7 +99,7 @@ public class Parser {
     private void doAction() {
         Symbol prevTopOfStack = parseStack.pop();
         switch (prevTopOfStack.name){
-            case "#a":
+            case "#set_definition":
 
                 break;
             case "#b":
