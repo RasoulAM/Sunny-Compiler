@@ -428,10 +428,10 @@ public class Scanner {
 
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner("src/sample.txt", new SymbolTable("a"), new ErrorHandler(new Stack<Symbol>()));
-        for (int i = 0; i < 100; i++) {
-            scanner.getNextToken();
-            System.out.println(scanner.currentToken + " "+ scanner.currentLineNumber);
-        }
+//        Scanner scanner = new Scanner("src/sample.txt", new SymbolTable("a"), new ErrorHandler(new Parser()));
+//        for (int i = 0; i < 100; i++) {
+//            scanner.getNextToken();
+//            System.out.println(scanner.currentToken + " "+ scanner.currentLineNumber);
+//        }
     }
 }

@@ -28,9 +28,9 @@
 @17.	Statement -> while ( #push_line GenExpression ) #save Statement #while
 @17.	Statement -> for ( #pid #pid Identifier = Integer #assign ; #push_line Expression RelTerm1 ; Identifier += Integer ) #save Statement #step_for
 @17.	Statement -> #pid Identifier = GenExpression #assign ;
-%17.	Statement -> System . out . println ( GenExpression #print ) ;
+@17.	Statement -> System . out . println ( GenExpression #print ) ;
 @18.	GenExpression -> Expression GenExpression1
-%19.	GenExpression1 -> RelTerm1 RelExpression1
+@19.	GenExpression1 -> RelTerm1 RelExpression1
 @19.	GenExpression1 -> ϵ
 @20.	Expression -> Term Expression2
 @21.	Expression2 -> Expression1 Expression2

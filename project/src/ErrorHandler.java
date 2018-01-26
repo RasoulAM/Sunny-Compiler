@@ -1,11 +1,12 @@
+import java.util.HashSet;
 import java.util.Stack;
 
 public class ErrorHandler {
-    private Stack<Symbol> parseStack;
+    private Parser parser;
 
 
-    public ErrorHandler(Stack<Symbol> parseStack) {
-        this.parseStack = parseStack;
+    public ErrorHandler(Parser parser) {
+        this.parser = parser;
     }
 
     public void illegalLanguageCharacter(int lineNumber, String character){
@@ -37,4 +38,32 @@ public class ErrorHandler {
         System.out.println("Variable named "+ variableName + " on line: " + lineNumber+
         " is undefined. ");
     }
+
+    public void missingToken(int lineNumber, String missing){
+        System.out.println("Missing \"" + missing + "\" " + " on line: " + lineNumber);
+    }
+
+    public boolean emptyParseTable(int lineNumber, String lookahead){
+        boolean synch = false;
+        System.out.println(parser.parseStack.peek());
+        int index = parser.parseStack.size() - 1;
+        while (parser.parseStack.get(index).type != Type.NON_TERMINAL)
+            index--;
+
+        HashSet<Symbol> h = parser.grammar.follow.get(parser.grammar.getNonTerminal(parser.parseStack.get(index).name));
+//        System.out.println(parser.grammar.follow.get(parser.grammar.getNonTerminal("Term1")));
+        if (h.contains(parser.grammar.getTerminal(lookahead)))
+            synch = true;
+        if (synch){
+            parser.parseStack.pop();
+            System.out.println("Missing input in line: " + lineNumber);
+            return false;
+        }
+        else{
+            System.out.println("Extra input in line " + lineNumber);
+            return true;
+        }
+
+    }
+
 }

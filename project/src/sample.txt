@@ -1,7 +1,8 @@
 public class Cls { 
 	public static void main( ) {
 		int a;
-		a = 2;
+		int b;
+		a = b 2;
 		while ( a < 10 )
 		    a = a  + 1 ;
 	} 

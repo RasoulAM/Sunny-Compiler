@@ -28,7 +28,7 @@ public class Parser {
 //        scanner.setCurrentSymbolTable(parentTable);
         parseStack = new Stack<>();
         scopes = new ArrayList<>();
-        errorHandler = new ErrorHandler(parseStack);
+        errorHandler = new ErrorHandler(this);
         scanner = new Scanner(programSrc, parentTable, errorHandler);
         grammar = new Grammar();
         intermediateCodeGenerator = new IntermediateCodeGenerator();
@@ -46,24 +46,18 @@ public class Parser {
 
     private void startParse() {
         currentToken = scanner.getNextToken();
-//        System.out.println(grammar.getRule(59).LHS);
-//        System.out.println(parseTable.get(grammar.getRule(59).LHS, "identifier"));
-//        return;
-//    }
-//    private void func(){
-        System.out.println(currentToken);
+//        System.out.println(currentToken);
         while(true){
-            String s;
-            if (Objects.equals(currentToken.getFirst(), "keyword"))
-                s = currentToken.getSecond();
-            else
-                s = currentToken.getFirst();
+            String s = currentToken.getComparable();
+//            if (Objects.equals(currentToken.getFirst(), "keyword"))
+//                s = currentToken.getSecond();
+//            else
+//                s = currentToken.getFirst();
             if (parseStack.empty())
                 break;
             System.out.println(parseStack);
             System.out.println("Top: " + parseStack.peek().toString());
             System.out.println("Lookahead: " + s);
-
             switch (parseStack.peek().type){
                 case TERMINAL:
                     match(s);
@@ -72,7 +66,6 @@ public class Parser {
                     updateStack(s);
                     break;
                 case ACTION_SYMBOL:
-//                    parseStack.pop();
                     doAction();
                     break;
             }
@@ -87,6 +80,9 @@ public class Parser {
         Symbol prevTopOfStack = parseStack.pop();
 
         if (parseTable.get(prevTopOfStack,lookahead) == null){
+            boolean next = errorHandler.emptyParseTable(scanner.getCurrentLineNumber(), lookahead);
+            if (next)
+                currentToken = scanner.getNextToken();
             error(1);
         }
         ArrayList<Symbol> RHS = parseTable.get(prevTopOfStack,lookahead);
@@ -104,8 +100,9 @@ public class Parser {
             if (!Objects.equals(lookahead, "EOF"))
                 currentToken = scanner.getNextToken();
         }
-        else
-            error(2);
+        else{
+            errorHandler.missingToken(scanner.getCurrentLineNumber(),parseStack.pop().name);
+        }
     }
 
     private void doAction() {
@@ -197,11 +194,16 @@ public class Parser {
                 break;
             case "#step_for":
                 step_for();
+                break;
+            case "#print":
+                print();
+                break;
         }
     }
 
-
-
+    private void print() {
+        intermediateCodeGenerator.write("PRINT", intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 1).toString(), "", "");
+    }
 
     private void step_for() {
         intermediateCodeGenerator.write("ADD", intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 3).toString(), intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 2).toString(),intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 3).toString());
