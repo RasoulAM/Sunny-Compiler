@@ -25,8 +25,8 @@
 @16.	Statements -> ϵ
 %17.	Statement -> { Statements }
 @17.	Statement -> if ( GenExpression ) #save Statement #save #jpf else Statement #fill
-%17.	Statement -> while ( #push_line GenExpression ) #save Statement #while
-%17.	Statement -> for ( #pid #pid Identifier = Integer #assign ; #push_line Expression RelTerm1 ; Identifier += Integer ) #save Statement #step_for
+@17.	Statement -> while ( #push_line GenExpression ) #save Statement #while
+@17.	Statement -> for ( #pid #pid Identifier = Integer #assign ; #push_line Expression RelTerm1 ; Identifier += Integer ) #save Statement #step_for
 @17.	Statement -> #pid Identifier = GenExpression #assign ;
 %17.	Statement -> System . out . println ( GenExpression #print ) ;
 @18.	GenExpression -> Expression GenExpression1
@@ -38,7 +38,7 @@
 @22.	Expression1 -> + Term #add
 @22.	Expression1 -> - Term #sub
 @23.	Term -> Factor Term1
-%24.	Term1 -> * Factor #mult Term1 
+@24.	Term1 -> * Factor #mult Term1 
 @24.	Term1 -> ϵ
 %25.	Factor -> ( Expression )
 @25.	Factor -> #pid Identifier Factor1
@@ -49,10 +49,10 @@
 @26.	Factor1 -> ϵ
 %27.	Factor2 -> ( #set_counter Arguments ) #pop_counter #push_return_value_address
 @27.	Factor2 -> ϵ
-28.	RelExpression1 -> && Expression #and RelTerm1 RelExpression1
-28.	RelExpression1 -> ϵ
-29.	RelTerm1 -> == Expression #equal
-29.	RelTerm1 -> < Expression #less_than
+@28.	RelExpression1 -> && Expression #and RelTerm1 RelExpression1
+@28.	RelExpression1 -> ϵ
+@29.	RelTerm1 -> == Expression #equal
+@29.	RelTerm1 -> < Expression #less_than
 30.	Arguments -> GenExpression #get_parameter_address #assign #inc_counter Argument
 30.	Arguments -> ϵ
 31.	Argument -> , GenExpression Argument

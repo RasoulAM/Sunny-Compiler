@@ -162,6 +162,18 @@ public class Parser {
             case "#sub":
                 sub();
                 break;
+            case "#multiply":
+                multiply();
+                break;
+            case "#and":
+                and();
+                break;
+            case "#equal":
+                equal();
+                break;
+            case "#less_than":
+                less_than();
+                break;
             case "#push_number":
                 push_number();
                 break;
@@ -188,6 +200,9 @@ public class Parser {
         }
     }
 
+
+
+
     private void step_for() {
         intermediateCodeGenerator.write("ADD", intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 3).toString(), intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 2).toString(),intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 3).toString());
         intermediateCodeGenerator.write("JP", intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 4).toString(), "", "");
@@ -202,7 +217,7 @@ public class Parser {
 
     private void while_action() {
         Integer jmpTarget = (Integer) intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 3);
-        intermediateCodeGenerator.write("JP",jmpTarget.toString(),"","");
+        intermediateCodeGenerator.write("JP", jmpTarget.toString(),"","");
         Integer pbIndex = (Integer) intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 1);
         String jpfComparator = (String) intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 2);
         intermediateCodeGenerator.writeWithDst(pbIndex, "JPF", jpfComparator, intermediateCodeGenerator.getIndex().toString(), "");
@@ -212,7 +227,6 @@ public class Parser {
     }
 
     private void push_line() {
-        System.out.println("DDDDDDDDDDDDDDDDDD");
         intermediateCodeGenerator.semanticStack.push(intermediateCodeGenerator.getIndex());
     }
 
@@ -264,10 +278,41 @@ public class Parser {
         String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
         String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
         Integer dst = intermediateCodeGenerator.getTemp();
-        intermediateCodeGenerator.write("SUB", src2.toString(), src1.toString(), dst.toString());
+        intermediateCodeGenerator.write("SUB", src2, src1, dst.toString());
         intermediateCodeGenerator.semanticStack.push(dst.toString());
     }
 
+    private void multiply() {
+        String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
+        String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
+        Integer dst = intermediateCodeGenerator.getTemp();
+        intermediateCodeGenerator.write("MULT", src2, src1, dst.toString());
+        intermediateCodeGenerator.semanticStack.push(dst.toString());
+    }
+
+    private void less_than() {
+        String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
+        String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
+        Integer dst = intermediateCodeGenerator.getTemp();
+        intermediateCodeGenerator.write("LT", src2, src1, dst.toString());
+        intermediateCodeGenerator.semanticStack.push(dst.toString());
+    }
+
+    private void equal() {
+        String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
+        String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
+        Integer dst = intermediateCodeGenerator.getTemp();
+        intermediateCodeGenerator.write("EQ", src2, src1, dst.toString());
+        intermediateCodeGenerator.semanticStack.push(dst.toString());
+    }
+
+    private void and() {
+        String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
+        String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
+        Integer dst = intermediateCodeGenerator.getTemp();
+        intermediateCodeGenerator.write("AND", src2, src1, dst.toString());
+        intermediateCodeGenerator.semanticStack.push(dst.toString());
+    }
 
     private void error(int code){
         System.out.println("Error " + code);
