@@ -65,6 +65,11 @@ public class Scanner {
     private boolean done = false;
     private Token currentToken;
     private ErrorHandler errorHandler;
+
+    public int getCurrentLineNumber() {
+        return currentLineNumber;
+    }
+
     // for keeping line
     private int currentLineNumber = 1;
     private int prevLf = 0;
