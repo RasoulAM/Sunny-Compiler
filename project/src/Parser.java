@@ -16,7 +16,7 @@ public class Parser {
 
     Grammar grammar;
 
-    String programSrc = "project/src/sample.txt";
+    String programSrc = "./src/sample.txt";
 
     Token currentToken;
 
@@ -78,7 +78,7 @@ public class Parser {
 
         }
         for (int i = 0; i < intermediateCodeGenerator.getIndex(); i++){
-            System.out.println(i + ": " + intermediateCodeGenerator.programBlock[i]);
+            System.out.println(i + "\t" + intermediateCodeGenerator.programBlock[i]);
         }
     }
 

@@ -1,21 +1,13 @@
 
-class cls1{
-    static int a;
-
-}
-
-
-class cls2 extends cls1{
-    static int a;
-    static int b;
-}
-
 public class Cls {
 	public static void main( ) {
-		int a;
-		int b;
-		a = b * 2;
-
+	    int i;
+	    int j;
+	    j = 5;
+	    j = j +-2;
+	    for (i = 0; i < j; i += 1){
+	        System.out.println(i);
+	    }
 	} 
 }
 

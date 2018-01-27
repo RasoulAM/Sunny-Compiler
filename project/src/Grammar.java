@@ -22,7 +22,7 @@ public class Grammar {
 
     Grammar(){
         try {
-            file = new FileInputStream("project/src/Grammar.grm");
+            file = new FileInputStream("./src/Grammar.grm");
             initialize_grammar();
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
@@ -53,7 +53,7 @@ public class Grammar {
     private void loadConfigFile() {
         Scanner s;
         try {
-            s = new Scanner(new FileInputStream("project/src/Grammar.cfg"));
+            s = new Scanner(new FileInputStream("./src/Grammar.cfg"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -67,7 +67,7 @@ public class Grammar {
 
     private void setConfigFile() throws IOException {
         BufferedWriter bw = null;
-        bw = new BufferedWriter(new FileWriter("project/src/Grammar.cfg"));
+        bw = new BufferedWriter(new FileWriter("./src/Grammar.cfg"));
         bw.write(nonTerminals.size());
         bw.write("\n");
         for (Symbol s: nonTerminals) {
@@ -234,7 +234,7 @@ public class Grammar {
         scanner.close();
 
         try {
-            scanner = new Scanner(new FileInputStream("project/src/" + "Grammar-Copy.grm"));
+            scanner = new Scanner(new FileInputStream("./src/" + "Grammar-Copy.grm"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
