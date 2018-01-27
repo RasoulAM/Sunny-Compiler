@@ -130,7 +130,7 @@ public class Parser {
             case "#reset_declaration":
                 scanner.setDefinition(false);
                 break;
-            case "#put_in_current_table":
+            case "#put_class_in_current_table":
                 int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
                 row = scanner.getCurrentSymbolTable().getRows().get(rowIndex);
                 row.setType("class");
@@ -220,7 +220,19 @@ public class Parser {
             case "#set_no_parent":
                 set_no_parent();
                 break;
+            case "#put_method_in_current_table":
+                put_method_in_current_table();
+                break;
         }
+    }
+
+    private void put_method_in_current_table() {
+        Row row;
+        int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
+        row = scanner.getCurrentSymbolTable().getRows().get(rowIndex);
+        row.setType("method");
+        Integer address = intermediateCodeGenerator.getVariableAddress();
+
     }
 
     private void set_no_parent() {
