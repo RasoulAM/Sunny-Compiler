@@ -64,4 +64,47 @@ public class ErrorHandler {
 
     }
 
+    // for semantic error checking
+    public void operandNotMatch(int lineNumber, int operation, int handSide){
+        String alert = "OOPS! Semantic Error occur on line: " + lineNumber;
+        switch (operation){
+            case 1: //add
+                if (handSide == 0){
+                    System.out.println(alert + " at the ADD operation. RHS is boolean!");
+                } else {
+                    System.out.println(alert + " at the ADD operation. LHS is boolean!");
+                }
+                break;
+            case 2: // sub
+                if (handSide == 0){
+                    System.out.println(alert + " at the SUB operation. RHS is boolean!");
+                } else {
+                    System.out.println(alert + " at the SUB operation. LHS is boolean!");
+                }
+                break;
+            case 3: // mult
+                if (handSide == 0){
+                    System.out.println(alert + " at the MULT operation. RHS is boolean!");
+                } else {
+                    System.out.println(alert + " at the MULT operation. LHS is boolean!");
+                }
+                break;
+            case 4: // &&
+
+                break;
+            case 5: //assignment
+
+                break;
+            case 6: // lessThan
+
+                break;
+            case 7: // equal
+
+                break;
+
+
+
+        }
+    }
+
 }

@@ -10,8 +10,7 @@ public class Test {
 //        String digit = "[0-9]";
 //        String other1 = "[^a-zA-Z0-9]";
 //        String validChars = "[a-zA-Z0-9|+|-|&|<|,|*|/|\\s|(|)|{|}|;|.]";
-//        System.out.println("".matches("[^\n]"));
-
+        System.out.println("".matches("]"));
 
         String workingDir = System.getProperty("user.dir");
         System.out.println(workingDir);

@@ -10,6 +10,7 @@ public class Parser {
 //    SymbolTable currentSymbolTable;
     ArrayList<SymbolTable> scopes;
     Stack<Symbol> parseStack;
+    Stack<String> semanticError = new Stack<>();
     ErrorHandler errorHandler;
 
     Scanner scanner;
