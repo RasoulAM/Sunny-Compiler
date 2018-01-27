@@ -8,16 +8,16 @@
 @6.	Extension -> ϵ
 @7.	FieldDeclarations -> FieldDeclaration FieldDeclarations
 @7.	FieldDeclarations -> ϵ
-@8.	FieldDeclaration -> static #set_declaration #push Type #set_type_address Identifier #reset_declaration ;
+@8.	FieldDeclaration -> static #set_declaration #push_type Type #set_type_address Identifier #reset_declaration ;
 @9.	VarDeclarations -> VarDeclaration VarDeclarations
 @9.	VarDeclarations -> ϵ
-@10.	VarDeclaration -> #set_declaration #push Type #set_type_address Identifier #reset_declaration ;
+@10.	VarDeclaration -> #set_declaration #push_type Type #set_type_address Identifier #reset_declaration ;
 @11.	MethodDeclarations -> MethodDeclaration MethodDeclarations
 @11.	MethodDeclarations -> ϵ
-@12.	MethodDeclaration -> public #set_declaration static #push Type #put_method_in_current_table #make_symbol_table #set_method_parent #push Identifier #reset_declaration #scope_in ( Parameters ) { VarDeclarations Statements return GenExpression #fill_return ; #scope_out }
-@13.	Parameters -> #set_declaration #push Type #set_function_in_parent #set_type_address Identifier #reset_declaration Parameter
+@12.	MethodDeclaration -> public #set_declaration static #push_type Type #put_method_in_current_table #make_symbol_table #set_method_parent #push Identifier #reset_declaration #scope_in ( Parameters ) { VarDeclarations Statements return GenExpression #fill_return ; #scope_out } #pop
+@13.	Parameters -> #set_declaration #push_type Type #set_function_in_parent #par_set_type_address Identifier #reset_declaration Parameter
 @13.	Parameters -> ϵ
-@14.	Parameter -> , #set_declaration #push Type #set_function_in_parent #set_type_address Identifier #reset_declaration Parameter
+@14.	Parameter -> , #set_declaration #push_type Type #set_function_in_parent #par_set_type_address Identifier #reset_declaration Parameter
 @14.	Parameter -> ϵ
 @15.	Type -> boolean
 @15.	Type -> int
@@ -40,23 +40,23 @@
 @23.	Term -> Factor Term1
 @24.	Term1 -> * Factor #mult Term1 
 @24.	Term1 -> ϵ
-%25.	Factor -> ( Expression )
-@25.	Factor -> #pid Identifier Factor1
+@25.	Factor -> ( Expression )
+@25.	Factor -> #pid #push Identifier Factor1
 @25.	Factor -> #push_bool true
 @25.	Factor -> #push_bool false
 @25.	Factor -> Integer
-%26.	Factor1 -> #push_scope . #push Identifier Factor2
-@26.	Factor1 -> ϵ
-%27.	Factor2 -> ( #set_counter Arguments ) #pop_counter #push_return_value_address
-@27.	Factor2 -> ϵ
+@26.	Factor1 -> #push_change_scope . #pid #push Identifier #return_scope Factor2 
+@26.	Factor1 -> ϵ #pop
+@27.	Factor2 -> ( #set_counter Arguments ) #pop #do_method
+@27.	Factor2 -> ϵ #pop
 @28.	RelExpression1 -> && Expression #and RelTerm1 RelExpression1
 @28.	RelExpression1 -> ϵ
 @29.	RelTerm1 -> == Expression #equal
 @29.	RelTerm1 -> < Expression #less_than
-30.	Arguments -> GenExpression #get_parameter_address #assign #inc_counter Argument
-30.	Arguments -> ϵ
-31.	Argument -> , GenExpression Argument
-31.	Argument -> ϵ
+%30.	Arguments -> #get_parameter_address GenExpression #assign #inc_counter Argument
+%30.	Arguments -> ϵ
+%31.	Argument -> , #get_parameter_address GenExpression #assign #inc_counter Argument
+%31.	Argument -> ϵ
 @32.	Identifier -> identifier
 @33.	Integer -> #push_number integer
 

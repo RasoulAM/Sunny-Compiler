@@ -1,25 +1,27 @@
 class cls1{
     static int a;
 
-    public static int meth (){
+    public static int meth (int c){
         a = 3;
         return 1;
     }
+}
 
+class cls2 extends cls1{
+
+    public static int func(){
+        int b;
+        b = a;
+        return 1;
+    }
 
 }
 
 
 public class Cls {
   public static void main( ) {
-      int i;
-      int j;
-      j = 5;
-      j = j +-2;
-      while (j < 10) {
-        System.out.println(j * j);
-        j = j + 1;
-      }
+      int b;
+      b = cls1.meth(1);
   } 
 }
 EOF

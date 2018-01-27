@@ -151,19 +151,23 @@ public class Parser {
             case "#scope_out":
                 scanner.setCurrentSymbolTable(intermediateCodeGenerator.scopeStack.pop());
                 break;
-            case "#push":
+            case "#push_type":
                 intermediateCodeGenerator.semanticStack.push(currentToken.getSecond());
                 break;
+            case "#push":
+                intermediateCodeGenerator.semanticStack.push(currentToken.getSecond().split(" ")[1]);
+                break;
+            case "#pop":
+                intermediateCodeGenerator.semanticStack.pop();
+                break;
             case "#set_type_address":
-                String type = (String) intermediateCodeGenerator.semanticStack.pop();
-                index = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
-                row = scanner.getCurrentSymbolTable().getRows().get(index);
-                row.setType(type);
-                row.setAddress(intermediateCodeGenerator.getVariableAddress());
+                set_type_address();
+                break;
+            case "#par_set_type_address":
+                par_set_type_address();
                 break;
             case "#pid":
                 pid();
-
                 break;
             case "#assign":
                 assign();
@@ -228,7 +232,101 @@ public class Parser {
             case "#fill_return":
                 fill_return();
                 break;
+            case "#push_change_scope":
+                push_change_scope();
+                break;
+            case "#return_scope":
+                return_scope();
+                break;
+            case "#set_counter":
+                set_counter();
+                break;
+            case "#do_method":
+                do_method();
+                break;
+            case "#get_parameter_address":
+                get_parameter_address();
+                break;
+            case "#inc_counter":
+                inc_counter();
+                break;
         }
+    }
+
+    private void inc_counter() {
+        Integer counter = (Integer) intermediateCodeGenerator.semanticStack.pop();
+        counter = counter + 1;
+        intermediateCodeGenerator.semanticStack.push(counter);
+    }
+
+    private void get_parameter_address(){
+        Integer counter = (Integer) intermediateCodeGenerator.semanticStack.pop();
+        String methodName = (String) intermediateCodeGenerator.semanticStack.peek();
+        SymbolTable father = intermediateCodeGenerator.scopeStack.peek();
+        Integer index = father.findRowByName(methodName);
+        System.out.println("FFFFF " + father + " " + methodName);
+        String parAddress = father.getRows().get(index).getFunctionArgs().get(counter).getMemory();
+        intermediateCodeGenerator.semanticStack.push(counter);
+        intermediateCodeGenerator.semanticStack.push(parAddress);
+    }
+
+    private void do_method() {
+        String methodName = (String) intermediateCodeGenerator.semanticStack.pop();
+        SymbolTable father = intermediateCodeGenerator.scopeStack.peek();
+        Integer index = father.findRowByName(methodName);
+        intermediateCodeGenerator.write("ASSIGN", "#" + (intermediateCodeGenerator.getIndex() + 2 ), father.getRows().get(index).getReturnAddressAddress().toString(),"" );
+        intermediateCodeGenerator.write("JP", (String) intermediateCodeGenerator.semanticStack.pop(), "", "");
+        intermediateCodeGenerator.semanticStack.push(father.getRows().get(index).getRetValueAddress().toString());
+        System.out.println("RRRRRR " + intermediateCodeGenerator.semanticStack);
+    }
+
+    private void set_counter() {
+        Integer counter = 0;
+        intermediateCodeGenerator.semanticStack.push(counter);
+    }
+
+    private void return_scope() {
+        SymbolTable temp = scanner.getCurrentSymbolTable();
+        scanner.setCurrentSymbolTable(intermediateCodeGenerator.scopeStack.pop());
+        intermediateCodeGenerator.scopeStack.push(temp);
+    }
+
+    private void push_change_scope() {
+        intermediateCodeGenerator.scopeStack.push(scanner.getCurrentSymbolTable());
+        String nameOfNewScope = (String) intermediateCodeGenerator.semanticStack.pop();
+        intermediateCodeGenerator.semanticStack.pop();
+        for (SymbolTable s: scopes){
+            if (s.getName().equals(nameOfNewScope)){
+                scanner.setCurrentSymbolTable(s);
+            }
+        }
+
+
+
+    }
+
+    private void par_set_type_address() {
+        String type = (String) intermediateCodeGenerator.semanticStack.pop();
+
+        SymbolTable parent = scanner.getCurrentSymbolTable().getParent();
+        Integer indexInParent = parent.findRowByName(scanner.getCurrentSymbolTable().getName());
+        Integer address = intermediateCodeGenerator.getVariableAddress();
+        System.out.println("GGGGGGGGGGGGGG");
+        parent.getRows().get(indexInParent).addArg(type,address.toString());
+
+
+        Integer index = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
+        Row row = scanner.getCurrentSymbolTable().getRows().get(index);
+        row.setType(type);
+        row.setAddress(address);
+    }
+
+    private void set_type_address() {
+        String type = (String) intermediateCodeGenerator.semanticStack.pop();
+        Integer index = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
+        Row row = scanner.getCurrentSymbolTable().getRows().get(index);
+        row.setType(type);
+        row.setAddress(intermediateCodeGenerator.getVariableAddress());
     }
 
     private void pid() {
@@ -241,18 +339,21 @@ public class Parser {
             }
         }
         Row row = targetSymbolTable.getRows().get(index);
-        intermediateCodeGenerator.semanticStack.push(row.getAddress().toString());
+        if (row.getAddress() != null)
+            intermediateCodeGenerator.semanticStack.push(row.getAddress().toString());
+        else
+            intermediateCodeGenerator.semanticStack.push("0");
     }
 
 
     private void fill_return() {
-        System.out.println(scanner.getCurrentSymbolTable().getName());
+//        System.out.println(scanner.getCurrentSymbolTable().getName());
         Integer rowIndex = scanner.getCurrentSymbolTable().getParent().findRowByName(scanner.getCurrentSymbolTable().getName());
         Row thisMethod = scanner.getCurrentSymbolTable().getParent().getRows().get(rowIndex);
         Integer address = thisMethod.getRetValueAddress();
         intermediateCodeGenerator.write("ASSIGN", intermediateCodeGenerator.semanticStack.pop().toString(), address.toString(), "");
 
-
+        intermediateCodeGenerator.write("JP", "@" + thisMethod.getReturnAddressAddress().toString(),"", "");
 
 
     }
@@ -268,7 +369,8 @@ public class Parser {
         Integer retAddress = intermediateCodeGenerator.getReturnValueAddress();
         row.setRetValueAddress(retAddress);
         row.setReturnValueType((String) intermediateCodeGenerator.semanticStack.pop());
-        Integer returnAddressAddress = intermediateCodeGenerator.getVariableAddress();
+        Integer returnAddressAddress = intermediateCodeGenerator.getTemp();
+        row.setReturnAddressAddress(returnAddressAddress);
 
     }
 
