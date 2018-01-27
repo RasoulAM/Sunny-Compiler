@@ -253,6 +253,8 @@ public class Parser {
         intermediateCodeGenerator.write("ASSIGN", intermediateCodeGenerator.semanticStack.pop().toString(), address.toString(), "");
 
 
+
+
     }
 
     private void put_method_in_current_table() {
@@ -266,6 +268,8 @@ public class Parser {
         Integer retAddress = intermediateCodeGenerator.getReturnValueAddress();
         row.setRetValueAddress(retAddress);
         row.setReturnValueType((String) intermediateCodeGenerator.semanticStack.pop());
+        Integer returnAddressAddress = intermediateCodeGenerator.getVariableAddress();
+
     }
 
     private void set_no_parent() {
