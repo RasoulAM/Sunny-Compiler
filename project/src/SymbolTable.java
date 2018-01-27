@@ -9,6 +9,15 @@ public class SymbolTable {
         this.name = name;
     }
 
+    public Integer findRowByName(String name){
+        for (int i = 0; i <rows.size() ; i++) {
+            if (rows.get(i).getName().equals(name)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public String searchThis(String name){
         for (int i = 0; i < rows.size(); i++) {
             if (rows.get(i).getName().equals(name)){
