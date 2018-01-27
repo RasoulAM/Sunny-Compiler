@@ -6,7 +6,24 @@ public class Row {
     private String type;
     private Integer retValueAddress;
     private String returnValueType;
+    private Integer returnAddressAddress;
     private ArrayList<FuncArg> functionArgs = new ArrayList<>();
+
+    public void setReturnAddressAddress(Integer returnAddressAddress) {
+        this.returnAddressAddress = returnAddressAddress;
+    }
+
+    public void setFunctionArgs(ArrayList<FuncArg> functionArgs) {
+        this.functionArgs = functionArgs;
+    }
+
+    public Integer getReturnAddressAddress() {
+        return returnAddressAddress;
+    }
+
+    public ArrayList<FuncArg> getFunctionArgs() {
+        return functionArgs;
+    }
 
     public Row(String name) {
         this.name = name;
