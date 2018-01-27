@@ -159,7 +159,7 @@ public class Parser {
             case "#sub":
                 sub();
                 break;
-            case "#multiply":
+            case "#mult":
                 multiply();
                 break;
             case "#and":
