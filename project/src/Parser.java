@@ -83,21 +83,23 @@ public class Parser {
             }
 
         }
+
         for (int i = 0; i < intermediateCodeGenerator.getIndex(); i++){
             System.out.println(i + "\t" + intermediateCodeGenerator.programBlock[i]);
         }
     }
 
     private void updateStack(String lookahead) {
-        Symbol prevTopOfStack = parseStack.pop();
+        Symbol prevTopOfStack = parseStack.peek();
 
         if (parseTable.get(prevTopOfStack,lookahead) == null){
-            boolean next = errorHandler.emptyParseTable(scanner.getCurrentLineNumber(), lookahead);
+            boolean next = errorHandler.emptyParseTable(scanner.getCurrentLineNumber(), lookahead, prevTopOfStack);
             if (next)
                 currentToken = scanner.getNextToken();
 //            error(1);
         }
         ArrayList<Symbol> RHS = parseTable.get(prevTopOfStack,lookahead);
+        parseStack.pop();
         if (RHS == null)
             return;
         for (int i = RHS.size() - 1; i >= 0; i--){
@@ -239,7 +241,14 @@ public class Parser {
             case "#inc_counter":
                 inc_counter();
                 break;
+            case "#main":
+                main_jmp();
+                break;
         }
+    }
+
+    private void main_jmp() {
+        intermediateCodeGenerator.writeWithDst(0, "JP", intermediateCodeGenerator.getIndex().toString(), "", "");
     }
 
     private void inc_counter() {
