@@ -16,13 +16,20 @@ public class Parser {
 
     Grammar grammar;
 
-    String programSrc = "./src/sample.txt";
+    String programSrc;
 
     Token currentToken;
 
     IntermediateCodeGenerator intermediateCodeGenerator;
 
     Parser(){
+        boolean isWindows = System.getProperty("os.name").contains("Windows");
+        String workingDir;
+        if (isWindows)
+            workingDir = "project";
+        else
+            workingDir = ".";
+        programSrc = workingDir + "/src/sample.txt";
         parseTable = new ParseTable();
         parentTable = new SymbolTable("package");
 //        scanner.setCurrentSymbolTable(parentTable);
