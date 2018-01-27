@@ -5,6 +5,7 @@ public class Row {
     private Integer address;
     private String type;
     private Integer retValueAddress;
+    private String returnValueType;
     private ArrayList<FuncArg> functionArgs = new ArrayList<>();
 
     public Row(String name) {
@@ -45,6 +46,22 @@ public class Row {
 
     public void addArg(String type, String memory){
         this.functionArgs.add(new FuncArg(type, memory));
+    }
+
+    public Integer getRetValueAddress() {
+        return retValueAddress;
+    }
+
+    public String getReturnValueType() {
+        return returnValueType;
+    }
+
+    public void setRetValueAddress(Integer retValueAddress) {
+        this.retValueAddress = retValueAddress;
+    }
+
+    public void setReturnValueType(String returnValueType) {
+        this.returnValueType = returnValueType;
     }
 
     @Override
