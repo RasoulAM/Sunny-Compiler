@@ -441,10 +441,10 @@ public class Parser {
     }
 
     private void push_bool() {
-        String a = "0";
+        String a = "false";
         if (currentToken.getSecond().equals("true"))
-            a = "1";
-        intermediateCodeGenerator.semanticStack.push("#" + a);
+            a = "true";
+        intermediateCodeGenerator.semanticStack.push(a);
     }
 
     private void push_number() {
