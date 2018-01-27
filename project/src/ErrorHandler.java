@@ -45,23 +45,20 @@ public class ErrorHandler {
 
     public boolean emptyParseTable(int lineNumber, String lookahead){
         boolean synch = false;
-        System.out.println(parser.parseStack.peek());
         int index = parser.parseStack.size() - 1;
         while (parser.parseStack.get(index).type != Type.NON_TERMINAL) {
             index--;
         }
-
         HashSet<Symbol> h = parser.grammar.follow.get(parser.grammar.getNonTerminal(parser.parseStack.get(index).name));
-//        System.out.println(parser.grammar.follow.get(parser.grammar.getNonTerminal("Term1")));
         if (h.contains(parser.grammar.getTerminal(lookahead)))
             synch = true;
         if (synch){
             parser.parseStack.pop();
-            System.out.println("Missing input in line: " + lineNumber);
+            System.out.println("Parsing Error: Missing " + " in line: " + lineNumber);
             return false;
         }
         else{
-            System.out.println("Extra input in line " + lineNumber);
+            System.out.println("Parsing Error: Extra input \"" + lookahead + "\" in line " + lineNumber);
             return true;
         }
 

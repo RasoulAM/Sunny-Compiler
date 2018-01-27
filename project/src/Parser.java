@@ -95,7 +95,7 @@ public class Parser {
             boolean next = errorHandler.emptyParseTable(scanner.getCurrentLineNumber(), lookahead);
             if (next)
                 currentToken = scanner.getNextToken();
-            error(1);
+//            error(1);
         }
         ArrayList<Symbol> RHS = parseTable.get(prevTopOfStack,lookahead);
         if (RHS == null)
@@ -130,10 +130,7 @@ public class Parser {
                 put_class_in_current_table();
                 break;
             case "#make_symbol_table":
-                SymbolTable s = new SymbolTable(currentToken.getSecond().split(" ")[1]);
-                intermediateCodeGenerator.scopeStack.push(s);
-                s.setParent(scanner.getCurrentSymbolTable());
-                scopes.add(s);
+                make_symbol_table();
                 break;
             case "#scope_in":
                 SymbolTable sss = intermediateCodeGenerator.scopeStack.pop();
@@ -512,6 +509,13 @@ public class Parser {
         int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
         Row row = scanner.getCurrentSymbolTable().getRows().get(rowIndex);
         row.setType("class");
+    }
+
+    private void make_symbol_table(){
+        SymbolTable s = new SymbolTable(currentToken.getSecond().split(" ")[1]);
+        intermediateCodeGenerator.scopeStack.push(s);
+        s.setParent(scanner.getCurrentSymbolTable());
+        scopes.add(s);
     }
 
     private void error(int code){
