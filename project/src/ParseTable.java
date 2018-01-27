@@ -39,7 +39,7 @@ public class ParseTable {
 //                else {
 //                }
                 parseTable.put(new Pair<>(r.LHS, s), aaa);
-                System.out.println("In2: " + r.LHS + ", " + s + " " + aaa);
+//                System.out.println("In2: " + r.LHS + ", " + s + " " + aaa);
             }
             if (grammar.first(r.RHS).contains(grammar.epsilon)){
                 for (Symbol s : grammar.follow.get(r.LHS)){

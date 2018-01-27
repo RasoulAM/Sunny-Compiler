@@ -50,9 +50,9 @@ public class Parser {
         Parser p = new Parser();
         for (SymbolTable s: p.scopes){
             System.out.print(s.getName() + " ");
-            if (s.getParent() != null)
-                System.out.print(s.getParent().getName());
-            System.out.println();
+            for (Row r:s.getRows()) {
+                System.out.println("     " + r);
+            }
         }
         System.out.println("Done");
     }
@@ -121,8 +121,8 @@ public class Parser {
     private void doAction() {
         Symbol prevTopOfStack = parseStack.pop();
         int index;
+        System.out.println("KKKKKKKKK" + intermediateCodeGenerator.semanticStack);
         Row row;
-        System.out.println(intermediateCodeGenerator.semanticStack);
         switch (prevTopOfStack.name){
             case "#set_declaration":
                 scanner.setDefinition(true);
@@ -162,9 +162,8 @@ public class Parser {
                 row.setAddress(intermediateCodeGenerator.getVariableAddress());
                 break;
             case "#pid":
-                index = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
-                row = scanner.getCurrentSymbolTable().getRows().get(index);
-                intermediateCodeGenerator.semanticStack.push(row.getAddress().toString());
+                pid();
+
                 break;
             case "#assign":
                 assign();
@@ -214,8 +213,11 @@ public class Parser {
             case "#print":
                 print();
                 break;
-            case "#set_parent":
-                set_parent();
+            case "#set_class_parent":
+                set_class_parent();
+                break;
+            case "#set_method_parent":
+                set_method_parent();
                 break;
             case "#set_no_parent":
                 set_no_parent();
@@ -223,11 +225,39 @@ public class Parser {
             case "#put_method_in_current_table":
                 put_method_in_current_table();
                 break;
+            case "#fill_return":
+                fill_return();
+                break;
         }
+    }
+
+    private void pid() {
+        String targetSymbolTableName = currentToken.getSecond().split(" ")[0];
+        Integer index = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
+        SymbolTable targetSymbolTable = scanner.getCurrentSymbolTable();
+        for (SymbolTable s: scopes){
+            if (targetSymbolTableName.equals(s.getName())){
+                targetSymbolTable = s;
+            }
+        }
+        Row row = targetSymbolTable.getRows().get(index);
+        intermediateCodeGenerator.semanticStack.push(row.getAddress().toString());
+    }
+
+
+    private void fill_return() {
+        System.out.println(scanner.getCurrentSymbolTable().getName());
+        Integer rowIndex = scanner.getCurrentSymbolTable().getParent().findRowByName(scanner.getCurrentSymbolTable().getName());
+        Row thisMethod = scanner.getCurrentSymbolTable().getParent().getRows().get(rowIndex);
+        Integer address = thisMethod.getRetValueAddress();
+        intermediateCodeGenerator.write("ASSIGN", intermediateCodeGenerator.semanticStack.pop().toString(), address.toString(), "");
+
+
     }
 
     private void put_method_in_current_table() {
         Row row;
+        System.out.println(currentToken);
         int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
         row = scanner.getCurrentSymbolTable().getRows().get(rowIndex);
         row.setType("method");
@@ -242,7 +272,21 @@ public class Parser {
 //        intermediateCodeGenerator.scopeStack.pop();
     }
 
-    private void set_parent() {
+
+    private void set_method_parent() {
+
+        SymbolTable symbolTable = intermediateCodeGenerator.scopeStack.peek();
+        symbolTable.setParent(scanner.getCurrentSymbolTable());
+//        String fatherName = currentToken.getSecond().split(" ")[1];
+//        for (SymbolTable s:scopes) {
+//            if (s.getName().equals(fatherName)){
+//                symbolTable.setParent(s);
+//                break;
+//            }
+//        }
+    }
+
+    private void set_class_parent() {
         SymbolTable symbolTable = intermediateCodeGenerator.scopeStack.peek();
         String fatherName = currentToken.getSecond().split(" ")[1];
         for (SymbolTable s:scopes) {

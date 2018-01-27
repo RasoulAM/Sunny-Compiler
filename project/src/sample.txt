@@ -1,3 +1,15 @@
+class cls1{
+    static int a;
+
+    public static int meth (){
+        a = 3;
+        return 1;
+    }
+
+
+}
+
+
 public class Cls {
   public static void main( ) {
       int i;

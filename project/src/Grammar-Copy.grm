@@ -1,20 +1,20 @@
 @1.	Goal -> Source EOF
 @2.	Source -> ClassDeclarations MainClass
-@3.	MainClass -> public #set_declaration class #put_in_current_table #make_symbol_table Identifier #reset_declaration #scope_in { public static void main ( ) { VarDeclarations Statements } #scope_out }
+@3.	MainClass -> public #set_declaration class #put_class_in_current_table #make_symbol_table Identifier #reset_declaration #scope_in { public static void main ( ) { VarDeclarations Statements } #scope_out }
 @4.	ClassDeclarations -> ClassDeclaration ClassDeclarations
 @4.	ClassDeclarations -> ϵ
-@5.	ClassDeclaration -> #set_declaration class #put_in_current_table #make_symbol_table Identifier Extension #reset_declaration #scope_in { FieldDeclarations MethodDeclarations #scope_out }
-%6.	Extension -> extends #set_parent Identifier
-%6.	Extension -> ϵ #set_no_parent
-%7.	FieldDeclarations -> FieldDeclaration FieldDeclarations
-%7.	FieldDeclarations -> ϵ
-%8.	FieldDeclaration -> static #set_declaration #push Type #set_type_address Identifier #reset_declaration ;
+@5.	ClassDeclaration -> #set_declaration class #put_class_in_current_table #make_symbol_table Identifier Extension #reset_declaration #scope_in { FieldDeclarations MethodDeclarations #scope_out }
+@6.	Extension -> extends #set_class_parent Identifier
+@6.	Extension -> ϵ
+@7.	FieldDeclarations -> FieldDeclaration FieldDeclarations
+@7.	FieldDeclarations -> ϵ
+@8.	FieldDeclaration -> static #set_declaration #push Type #set_type_address Identifier #reset_declaration ;
 @9.	VarDeclarations -> VarDeclaration VarDeclarations
 @9.	VarDeclarations -> ϵ
 @10.	VarDeclaration -> #set_declaration #push Type #set_type_address Identifier #reset_declaration ;
-%11.	MethodDeclarations -> MethodDeclaration MethodDeclarations
-%11.	MethodDeclarations -> ϵ
-%12.	MethodDeclaration -> public static #push Type #put_in_current_table #make_symbol_table #set_parent #push Identifier #scope_in ( Parameters ) { VarDeclarations Statements return GenExpression ; #scope_out }
+@11.	MethodDeclarations -> MethodDeclaration MethodDeclarations
+@11.	MethodDeclarations -> ϵ
+%12.	MethodDeclaration -> public #set_declaration static #push Type #put_method_in_current_table #make_symbol_table #set_method_parent #push Identifier #reset_declaration #scope_in ( Parameters ) { VarDeclarations Statements return GenExpression #fill_return ; #scope_out }
 %13.	Parameters -> #set_declaration #push Type #set_function_in_parent #set_type_address Identifier #reset_declaration Parameter
 %13.	Parameters -> ϵ
 %14.	Parameter -> , #set_declaration #push Type #set_function_in_parent #set_type_address Identifier #reset_declaration Parameter
