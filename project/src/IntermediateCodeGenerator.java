@@ -10,6 +10,7 @@ public class IntermediateCodeGenerator {
     private Integer index = 0;
     int variableAddress = 100;
     int baseTempAddress = 500;
+    int returnValueAddress = 2000;
 
     Stack<Object> semanticStack = new Stack<>();
     Stack<SymbolTable> scopeStack = new Stack<>();
@@ -23,6 +24,12 @@ public class IntermediateCodeGenerator {
     public int getVariableAddress(){
         int temp = variableAddress;
         variableAddress += 4;
+        return temp;
+    }
+
+    public int getReturnValueAddress(){
+        int temp = returnValueAddress;
+        returnValueAddress += 4;
         return temp;
     }
 

@@ -138,7 +138,7 @@ public class Parser {
             case "#make_symbol_table":
 //                System.out.println(currentToken.getSecond());
                 SymbolTable s = new SymbolTable(currentToken.getSecond().split(" ")[1]);
-                System.out.println("ZZZZZ " + s.getName());
+//                System.out.println("ZZZZZ " + s.getName());
 //                s.setParent(scanner.getCurrentSymbolTable());
                 intermediateCodeGenerator.scopeStack.push(s);
                 scopes.add(s);
@@ -231,8 +231,11 @@ public class Parser {
         int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
         row = scanner.getCurrentSymbolTable().getRows().get(rowIndex);
         row.setType("method");
-        Integer address = intermediateCodeGenerator.getVariableAddress();
-
+        Integer methodAddress = intermediateCodeGenerator.getIndex();
+        row.setAddress(methodAddress);
+        Integer retAddress = intermediateCodeGenerator.getReturnValueAddress();
+        row.setRetValueAddress(retAddress);
+        row.setReturnValueType((String) intermediateCodeGenerator.semanticStack.pop());
     }
 
     private void set_no_parent() {
