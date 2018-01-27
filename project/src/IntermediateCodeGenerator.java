@@ -7,7 +7,7 @@ public class IntermediateCodeGenerator {
 
 
     String[] programBlock = new String[100];
-    private Integer index = 0;
+    private Integer index = 1;
     int variableAddress = 100;
     int baseTempAddress = 500;
     int returnValueAddress = 2000;

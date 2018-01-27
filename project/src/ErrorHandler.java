@@ -40,21 +40,25 @@ public class ErrorHandler {
     }
 
     public void missingToken(int lineNumber, String missing){
-        System.out.println("Missing \"" + missing + "\" " + " on line: " + lineNumber);
+        System.out.println("Parsing Error: Missing \"" + missing + "\" " + " on line: " + lineNumber);
     }
 
-    public boolean emptyParseTable(int lineNumber, String lookahead){
+    public boolean emptyParseTable(int lineNumber, String lookahead, Symbol topOfParseStack){
         boolean synch = false;
-        int index = parser.parseStack.size() - 1;
-        while (parser.parseStack.get(index).type != Type.NON_TERMINAL) {
-            index--;
-        }
-        HashSet<Symbol> h = parser.grammar.follow.get(parser.grammar.getNonTerminal(parser.parseStack.get(index).name));
-        if (h.contains(parser.grammar.getTerminal(lookahead)))
+//        int index = parser.parseStack.size() - 1;
+//        while (parser.parseStack.get(index).type != Type.NON_TERMINAL) {
+//            index--;
+//        }
+//        HashSet<Symbol> h = parser.grammar.follow.get(parser.grammar.getNonTerminal(parser.parseStack.get(index).name));
+        HashSet<Symbol> h = parser.grammar.follow.get(parser.grammar.getNonTerminal(topOfParseStack.name));
+        if (h.contains(parser.grammar.getTerminal(lookahead))) {
             synch = true;
+        }
         if (synch){
+//            Symbol poppedSymbol = parser.parseStack.remove(index);
+            String result = parser.grammar.getMin(topOfParseStack);
+            System.out.println("Parsing Error: Missing " + result + "in line: " + lineNumber);
             parser.parseStack.pop();
-            System.out.println("Parsing Error: Missing " + " in line: " + lineNumber);
             return false;
         }
         else{

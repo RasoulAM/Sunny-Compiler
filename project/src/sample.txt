@@ -11,8 +11,8 @@ class cls2 extends cls1{
 
     public static int func(){
         int b;
-        b = a;
-        return b)
+        b = a *;
+        return b;
     }
 
 }

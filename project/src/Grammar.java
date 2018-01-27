@@ -336,6 +336,57 @@ public class Grammar {
         return rules.get(num);
     }
 
+    public String getMin(Symbol symbol){
+        if (symbol.type == Type.TERMINAL){
+            return symbol.name;
+        }
+        ArrayList<Symbol> ans = new ArrayList<>();
+        ans.add(symbol);
+        int index = 0;
+        while (index < ans.size()){
+            if (ans.get(index).type == Type.TERMINAL)
+                index++;
+            else if (ans.get(index).type == Type.ACTION_SYMBOL){
+                ans.remove(index);
+            }
+            else if (ans.get(index).type == Type.NON_TERMINAL){
+                ans.remove(index);
+                Rule r = rules.get(minExpand(symbol));
+                for (int i = 0; i < r.RHS.size(); i++) {
+                    if (r.RHS.get(i) != epsilon)
+                        ans.add(index, r.RHS.get(i));
+                }
+            }
+        }
+        String str = "";
+        for (int i = 0; i < ans.size(); i++) {
+            str = str + ans.get(i) + " ";
+        }
+        return str;
+    }
+
+    private int minExpand(Symbol symbol){
+        int ruleIndex = 0;
+        int minRHS = 100;
+        for (int i = 0; i < rules.size(); i++) {
+            if (ruleSize(i) <= minRHS ){
+                ruleIndex = i;
+                minRHS = ruleSize(i);
+            }
+        }
+        return ruleIndex;
+    }
+
+    private int ruleSize(int ruleIndex){
+        Rule rule = rules.get(ruleIndex);
+        int count = 0;
+        for (Symbol s:rule.RHS) {
+            if (s.type != Type.ACTION_SYMBOL)
+                count++;
+        }
+        return count;
+    }
+
 
 
     public static void main(String[] args) {
