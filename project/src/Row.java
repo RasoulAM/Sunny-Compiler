@@ -4,7 +4,8 @@ public class Row {
     private String name;
     private Integer address;
     private String type;
-    private ArrayList<String> functionArgsType = new ArrayList<>();
+    private Integer retValueAddress;
+    private ArrayList<FuncArg> functionArgs = new ArrayList<>();
 
     public Row(String name) {
         this.name = name;
@@ -22,8 +23,8 @@ public class Row {
         this.type = type;
     }
 
-    public void setFunctionArgsType(ArrayList<String> functionArgsType) {
-        this.functionArgsType = functionArgsType;
+    public void setFunctionArgsType(ArrayList<FuncArg> functionArgs) {
+        this.functionArgs = functionArgs;
     }
 
     public String getName() {
@@ -38,8 +39,12 @@ public class Row {
         return type;
     }
 
-    public ArrayList<String> getFunctionArgsType() {
-        return functionArgsType;
+    public ArrayList<FuncArg> getFunctionArgsType() {
+        return functionArgs;
+    }
+
+    public void addArg(String type, String memory){
+        this.functionArgs.add(new FuncArg(type, memory));
     }
 
     @Override
@@ -50,5 +55,23 @@ public class Row {
                 ", type='" + type + '\'' +
                 ", functionArgsType=" + functionArgsType +
                 '}';
+    }
+}
+
+class FuncArg{
+    private String type;
+    private String memory;
+
+    public FuncArg(String type, String memory) {
+        this.type = type;
+        this.memory = memory;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getMemory() {
+        return memory;
     }
 }
