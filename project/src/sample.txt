@@ -1,12 +1,22 @@
-public class Cls { 
+
+class cls1{
+    static int a;
+
+}
+
+
+class cls2 extends cls1{
+    static int a;
+    static int b;
+}
+
+public class Cls {
 	public static void main( ) {
 		int a;
 		int b;
 		a = b * 2;
-		for (a = 0;a < 100;a+= 1)
-		    while ( b < 1 + -2 )
-		        a = b;
-		System.out.println(a);
+
 	} 
-} 
+}
+
 EOF

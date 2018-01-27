@@ -47,8 +47,9 @@ public class ErrorHandler {
         boolean synch = false;
         System.out.println(parser.parseStack.peek());
         int index = parser.parseStack.size() - 1;
-        while (parser.parseStack.get(index).type != Type.NON_TERMINAL)
+        while (parser.parseStack.get(index).type != Type.NON_TERMINAL) {
             index--;
+        }
 
         HashSet<Symbol> h = parser.grammar.follow.get(parser.grammar.getNonTerminal(parser.parseStack.get(index).name));
 //        System.out.println(parser.grammar.follow.get(parser.grammar.getNonTerminal("Term1")));

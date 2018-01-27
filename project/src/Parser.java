@@ -40,7 +40,13 @@ public class Parser {
     }
 
     public static void main(String[] args) {
-        new Parser();
+        Parser p = new Parser();
+        for (SymbolTable s: p.scopes){
+            System.out.print(s.getName() + " ");
+            if (s.getParent() != null)
+                System.out.print(s.getParent().getName());
+            System.out.println();
+        }
         System.out.println("Done");
     }
 
@@ -125,15 +131,18 @@ public class Parser {
             case "#make_symbol_table":
 //                System.out.println(currentToken.getSecond());
                 SymbolTable s = new SymbolTable(currentToken.getSecond().split(" ")[1]);
-                s.setParent(scanner.getCurrentSymbolTable());
+                System.out.println("ZZZZZ " + s.getName());
+//                s.setParent(scanner.getCurrentSymbolTable());
                 intermediateCodeGenerator.scopeStack.push(s);
                 scopes.add(s);
                 break;
             case "#scope_in":
-                scanner.setCurrentSymbolTable(intermediateCodeGenerator.scopeStack.pop());
+                SymbolTable sss = intermediateCodeGenerator.scopeStack.pop();
+                intermediateCodeGenerator.scopeStack.push(scanner.getCurrentSymbolTable());
+                scanner.setCurrentSymbolTable(sss);
                 break;
             case "#scope_out":
-                scanner.setCurrentSymbolTable(scanner.getCurrentSymbolTable().getParent());
+                scanner.setCurrentSymbolTable(intermediateCodeGenerator.scopeStack.pop());
                 break;
             case "#push":
                 intermediateCodeGenerator.semanticStack.push(currentToken.getSecond());
@@ -198,6 +207,27 @@ public class Parser {
             case "#print":
                 print();
                 break;
+            case "#set_parent":
+                set_parent();
+                break;
+            case "#set_no_parent":
+                set_no_parent();
+                break;
+        }
+    }
+
+    private void set_no_parent() {
+//        intermediateCodeGenerator.scopeStack.pop();
+    }
+
+    private void set_parent() {
+        SymbolTable symbolTable = intermediateCodeGenerator.scopeStack.peek();
+        String fatherName = currentToken.getSecond().split(" ")[1];
+        for (SymbolTable s:scopes) {
+            if (s.getName().equals(fatherName)){
+                symbolTable.setParent(s);
+                break;
+            }
         }
     }
 

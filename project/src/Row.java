@@ -53,7 +53,7 @@ public class Row {
                 "name='" + name + '\'' +
                 ", address=" + address +
                 ", type='" + type + '\'' +
-                ", functionArgsType=" + functionArgsType +
+                ", functionArgsType=" + functionArgs +
                 '}';
     }
 }
