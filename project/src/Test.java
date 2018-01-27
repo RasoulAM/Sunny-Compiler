@@ -12,10 +12,13 @@ public class Test {
 //        String validChars = "[a-zA-Z0-9|+|-|&|<|,|*|/|\\s|(|)|{|}|;|.]";
 //        System.out.println("".matches("[^\n]"));
 
-        Stack<Integer> s = new Stack<>();
-        s.push(1);
-        s.push(2);
-        System.out.println(s.get(0));
+
+        String workingDir = System.getProperty("user.dir");
+        System.out.println(workingDir);
+//        Stack<Integer> s = new Stack<>();
+//        s.push(1);
+//        s.push(2);
+//        System.out.println(s.get(0));
 
     }
 }
