@@ -48,18 +48,17 @@ public class Parser {
 
     public static void main(String[] args) {
         Parser p = new Parser();
-        for (SymbolTable s: p.scopes){
-            System.out.print(s.getName() + " ");
-            for (Row r:s.getRows()) {
-                System.out.println("     " + r);
-            }
-        }
+//        for (SymbolTable s: p.scopes){
+//            System.out.print(s.getName() + " ");
+//            for (Row r:s.getRows()) {
+//                System.out.println("     " + r);
+//            }
+//        }
         System.out.println("Done");
     }
 
     private void startParse() {
         currentToken = scanner.getNextToken();
-//        System.out.println(currentToken);
         while(true){
             String s = currentToken.getComparable();
 //            if (Objects.equals(currentToken.getFirst(), "keyword"))
@@ -68,9 +67,9 @@ public class Parser {
 //                s = currentToken.getFirst();
             if (parseStack.empty())
                 break;
-            System.out.println(parseStack);
-            System.out.println("Top: " + parseStack.peek().toString());
-            System.out.println("Lookahead: " + s);
+//            System.out.println(parseStack);
+//            System.out.println("Top: " + parseStack.peek().toString());
+//            System.out.println("Lookahead: " + s);
             switch (parseStack.peek().type){
                 case TERMINAL:
                     match(s);
@@ -120,9 +119,6 @@ public class Parser {
 
     private void doAction() {
         Symbol prevTopOfStack = parseStack.pop();
-        int index;
-        System.out.println("KKKKKKKKK" + intermediateCodeGenerator.semanticStack);
-        Row row;
         switch (prevTopOfStack.name){
             case "#set_declaration":
                 scanner.setDefinition(true);
@@ -131,16 +127,12 @@ public class Parser {
                 scanner.setDefinition(false);
                 break;
             case "#put_class_in_current_table":
-                int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
-                row = scanner.getCurrentSymbolTable().getRows().get(rowIndex);
-                row.setType("class");
+                put_class_in_current_table();
                 break;
             case "#make_symbol_table":
-//                System.out.println(currentToken.getSecond());
                 SymbolTable s = new SymbolTable(currentToken.getSecond().split(" ")[1]);
-//                System.out.println("ZZZZZ " + s.getName());
-//                s.setParent(scanner.getCurrentSymbolTable());
                 intermediateCodeGenerator.scopeStack.push(s);
+                s.setParent(scanner.getCurrentSymbolTable());
                 scopes.add(s);
                 break;
             case "#scope_in":
@@ -264,7 +256,6 @@ public class Parser {
         String methodName = (String) intermediateCodeGenerator.semanticStack.peek();
         SymbolTable father = intermediateCodeGenerator.scopeStack.peek();
         Integer index = father.findRowByName(methodName);
-        System.out.println("FFFFF " + father + " " + methodName);
         String parAddress = father.getRows().get(index).getFunctionArgs().get(counter).getMemory();
         intermediateCodeGenerator.semanticStack.push(counter);
         intermediateCodeGenerator.semanticStack.push(parAddress);
@@ -277,7 +268,6 @@ public class Parser {
         intermediateCodeGenerator.write("ASSIGN", "#" + (intermediateCodeGenerator.getIndex() + 2 ), father.getRows().get(index).getReturnAddressAddress().toString(),"" );
         intermediateCodeGenerator.write("JP", (String) intermediateCodeGenerator.semanticStack.pop(), "", "");
         intermediateCodeGenerator.semanticStack.push(father.getRows().get(index).getRetValueAddress().toString());
-        System.out.println("RRRRRR " + intermediateCodeGenerator.semanticStack);
     }
 
     private void set_counter() {
@@ -311,7 +301,6 @@ public class Parser {
         SymbolTable parent = scanner.getCurrentSymbolTable().getParent();
         Integer indexInParent = parent.findRowByName(scanner.getCurrentSymbolTable().getName());
         Integer address = intermediateCodeGenerator.getVariableAddress();
-        System.out.println("GGGGGGGGGGGGGG");
         parent.getRows().get(indexInParent).addArg(type,address.toString());
 
 
@@ -360,7 +349,7 @@ public class Parser {
 
     private void put_method_in_current_table() {
         Row row;
-        System.out.println(currentToken);
+//        System.out.println(currentToken);
         int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
         row = scanner.getCurrentSymbolTable().getRows().get(rowIndex);
         row.setType("method");
@@ -517,6 +506,12 @@ public class Parser {
         Integer dst = intermediateCodeGenerator.getTemp();
         intermediateCodeGenerator.write("AND", src2, src1, dst.toString());
         intermediateCodeGenerator.semanticStack.push(dst.toString());
+    }
+
+    private void put_class_in_current_table(){
+        int rowIndex = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
+        Row row = scanner.getCurrentSymbolTable().getRows().get(rowIndex);
+        row.setType("class");
     }
 
     private void error(int code){
