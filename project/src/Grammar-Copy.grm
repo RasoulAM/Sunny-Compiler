@@ -26,7 +26,7 @@
 %17.	Statement -> { Statements }
 @17.	Statement -> if ( GenExpression ) #save Statement #save #jpf else Statement #fill
 %17.	Statement -> while ( #push_line GenExpression ) #save Statement #while
-%17.	Statement -> for ( #pid #pid Identifier = Integer #assign ; #push_line Expression RelTerm1 ; Identifier += Integer ) #save Statement #step_for
+%17.	Statement -> for ( #pid Identifier = Integer #assign ; #push_line Expression RelTerm1 ; #pid Identifier += Integer ) #save Statement #step_for
 @17.	Statement -> #pid Identifier = GenExpression #assign ;
 %17.	Statement -> System . out . println ( GenExpression #print ) ;
 @18.	GenExpression -> Expression GenExpression1

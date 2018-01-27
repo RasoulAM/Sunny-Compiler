@@ -203,13 +203,14 @@ public class Parser {
 
     private void print() {
         intermediateCodeGenerator.write("PRINT", intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 1).toString(), "", "");
+        intermediateCodeGenerator.semanticStack.pop();
     }
 
     private void step_for() {
         intermediateCodeGenerator.write("ADD", intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 3).toString(), intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 2).toString(),intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 3).toString());
-        intermediateCodeGenerator.write("JP", intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 4).toString(), "", "");
+        intermediateCodeGenerator.write("JP", intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 5).toString(), "", "");
         Integer pbIndex = (Integer) intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 1);
-        intermediateCodeGenerator.writeWithDst(pbIndex,"JPF",intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 5).toString(),intermediateCodeGenerator.getIndex().toString(),"");
+        intermediateCodeGenerator.writeWithDst(pbIndex,"JPF",intermediateCodeGenerator.semanticStack.get(intermediateCodeGenerator.semanticStack.size() - 4).toString(),intermediateCodeGenerator.getIndex().toString(),"");
         intermediateCodeGenerator.semanticStack.pop();
         intermediateCodeGenerator.semanticStack.pop();
         intermediateCodeGenerator.semanticStack.pop();

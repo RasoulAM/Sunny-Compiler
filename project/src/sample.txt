@@ -3,8 +3,10 @@ public class Cls {
 		int a;
 		int b;
 		a = b * 2;
-		while ( a == 10 )
-		    a = a  + b * 10 ;
+		for (a = 0;a < 100;a+= 1)
+		    while ( b < 1 + -2 )
+		        a = b;
+		System.out.println(a);
 	} 
 } 
 EOF
