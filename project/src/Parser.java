@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -14,6 +17,7 @@ public class Parser {
     Scanner scanner;
     Grammar grammar;
     String programName = "sample.txt";
+    String outputName = "output.txt";
     Token currentToken;
     IntermediateCodeGenerator intermediateCodeGenerator;
 
@@ -35,6 +39,28 @@ public class Parser {
         intermediateCodeGenerator = new IntermediateCodeGenerator();
         parseStack.push(grammar.startSymbol);
         startParse();
+        makeOutput();
+    }
+
+    private void makeOutput() {
+        BufferedWriter bw = null;
+        boolean isWindows = System.getProperty("os.name").contains("Windows");
+        String outputSrc;
+        if (isWindows)
+            outputSrc = "project/src/" + outputName;
+        else
+            outputSrc = "./src/" + outputName;
+        try {
+            bw = new BufferedWriter(new FileWriter(outputSrc));
+            for (int i = 0; i < intermediateCodeGenerator.getIndex(); i++){
+                bw.write(i + "\t" + intermediateCodeGenerator.programBlock[i] + "\n");
+                System.out.println(i + "\t" + intermediateCodeGenerator.programBlock[i]);
+            }
+            bw.close();
+        } catch (IOException e) {
+            System.out.println("Output file not found!");
+        }
+
     }
 
     // return type of desired address
@@ -89,10 +115,6 @@ public class Parser {
                     break;
             }
 
-        }
-
-        for (int i = 0; i < intermediateCodeGenerator.getIndex(); i++){
-            System.out.println(i + "\t" + intermediateCodeGenerator.programBlock[i]);
         }
     }
 
