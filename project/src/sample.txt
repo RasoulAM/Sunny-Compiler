@@ -1,31 +1,6 @@
-class cls1{
-    static int a;
-
-    public static int meth (int c){
-        a = 3;
-        return 1;
+public class OSTAD{
+    public static void main(){
+        System.out.println(3-2+1);
     }
-}
-
-class cls2 extends cls1{
-
-    public static int func(){
-        int b;
-        b = a *;
-        return b;
-    }
-
-}
-
-
-public class Cls {
-  public static void main( ) {
-      int b;
-      int c;
-      while( b == 10){
-        b = cls1.meth(c);
-        c = 1;
-      }
-  }
 }
 EOF

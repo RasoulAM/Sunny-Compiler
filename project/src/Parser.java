@@ -10,7 +10,7 @@ public class Parser {
 //    SymbolTable currentSymbolTable;
     ArrayList<SymbolTable> scopes;
     Stack<Symbol> parseStack;
-    Stack<String> semanticError = new Stack<>();
+    ArrayList<String> temporary = new ArrayList<>();
     ErrorHandler errorHandler;
 
     Scanner scanner;
@@ -36,6 +36,7 @@ public class Parser {
 //        scanner.setCurrentSymbolTable(parentTable);
         parseStack = new Stack<>();
         scopes = new ArrayList<>();
+        scopes.add(parentTable);
         errorHandler = new ErrorHandler(this);
         scanner = new Scanner(programSrc, parentTable, errorHandler);
         grammar = new Grammar();
@@ -45,6 +46,25 @@ public class Parser {
         startParse();
 
 
+    }
+
+    // return type of desired address
+    public String getType(String address){
+        for (int i = 0; i < scopes.size(); i++) {
+            for (int j = 0; j < scopes.get(i).getRows().size(); j++) {
+                if (scopes.get(i).getRows().get(j).getAddress() != null &&
+                        scopes.get(i).getRows().get(j).getAddress().toString().equals(address)){
+                    return scopes.get(i).getRows().get(j).getType();
+                }
+
+            }
+        }
+        for (int i = 0; i < temporary.size(); i++) {
+            if (temporary.get(i).split(" ")[0].equals(address)){
+                return temporary.get(i).split(" ")[1];
+            }
+        }
+        return null;
     }
 
     public static void main(String[] args) {
@@ -296,6 +316,7 @@ public class Parser {
             if (s.getName().equals(nameOfNewScope)){
                 scanner.setCurrentSymbolTable(s);
             }
+//            System.out.println("AAAAAA ");
         }
 
 
@@ -326,10 +347,12 @@ public class Parser {
     }
 
     private void pid() {
+//        System.out.println(currentToken);
         String targetSymbolTableName = currentToken.getSecond().split(" ")[0];
         Integer index = Integer.parseInt(currentToken.getSecond().split(" ")[2]);
         SymbolTable targetSymbolTable = scanner.getCurrentSymbolTable();
         for (SymbolTable s: scopes){
+//            System.out.print(s.getName() +"\t");
             if (targetSymbolTableName.equals(s.getName())){
                 targetSymbolTable = s;
             }
@@ -464,13 +487,27 @@ public class Parser {
     private void assign() {
         String src = (String) intermediateCodeGenerator.semanticStack.pop();
         String dst = (String) intermediateCodeGenerator.semanticStack.pop();
+        String srcType = getType(src);
+        String dstType = getType(dst);
+        if (srcType != null && dstType != null && !getType(src).equals(getType(dst))){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 5, 0);
+        }
         intermediateCodeGenerator.write("ASSIGN", src, dst, "");
     }
 
     private void add(){
         String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
         String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
+        String src1Type = getType(src1);
+        String src2Type = getType(src2);
+        if (src1Type!= null && src1Type.equals("boolean")){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 1, 0);
+        }
+        if (src2Type!= null && src2Type.equals("boolean")){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 1, 1);
+        }
         Integer dst = intermediateCodeGenerator.getTemp();
+        temporary.add(dst.toString() + " " + "int");
         intermediateCodeGenerator.write("ADD", src1, src2, dst.toString());
         intermediateCodeGenerator.semanticStack.push(dst.toString());
     }
@@ -478,7 +515,16 @@ public class Parser {
     private void sub(){
         String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
         String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
+        String src1Type = getType(src1);
+        String src2Type = getType(src2);
+        if (src1Type != null && src1Type.equals("boolean")){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 2, 0);
+        }
+        if (src2Type!= null && src2Type.equals("boolean")){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 2, 1);
+        }
         Integer dst = intermediateCodeGenerator.getTemp();
+        temporary.add(dst.toString() + " " + "int");
         intermediateCodeGenerator.write("SUB", src2, src1, dst.toString());
         intermediateCodeGenerator.semanticStack.push(dst.toString());
     }
@@ -486,7 +532,16 @@ public class Parser {
     private void multiply() {
         String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
         String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
+        String src1Type = getType(src1);
+        String src2Type = getType(src2);
+        if (src1Type != null && src1Type.equals("boolean")){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 3, 0);
+        }
+        if (src2Type!= null && src2Type.equals("boolean")){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 3, 1);
+        }
         Integer dst = intermediateCodeGenerator.getTemp();
+        temporary.add(dst.toString() + " " + "int");
         intermediateCodeGenerator.write("MULT", src2, src1, dst.toString());
         intermediateCodeGenerator.semanticStack.push(dst.toString());
     }
@@ -494,7 +549,16 @@ public class Parser {
     private void less_than() {
         String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
         String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
+        String src1Type = getType(src1);
+        String src2Type = getType(src2);
+        if (src1Type != null && src1Type.equals("boolean")){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 6, 0);
+        }
+        if (src2Type != null && src2Type.equals("boolean")){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 6, 1);
+        }
         Integer dst = intermediateCodeGenerator.getTemp();
+        temporary.add(dst.toString() + " " + "boolean");
         intermediateCodeGenerator.write("LT", src2, src1, dst.toString());
         intermediateCodeGenerator.semanticStack.push(dst.toString());
     }
@@ -502,7 +566,13 @@ public class Parser {
     private void equal() {
         String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
         String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
+        String src1Type = getType(src1);
+        String src2Type = getType(src2);
+        if (src1Type!= null && src2Type != null && !src1Type.equals(src2Type)){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 7, 0);
+        }
         Integer dst = intermediateCodeGenerator.getTemp();
+        temporary.add(dst.toString() + " " + "boolean");
         intermediateCodeGenerator.write("EQ", src2, src1, dst.toString());
         intermediateCodeGenerator.semanticStack.push(dst.toString());
     }
@@ -510,7 +580,16 @@ public class Parser {
     private void and() {
         String src1 = (String) intermediateCodeGenerator.semanticStack.pop();
         String src2 = (String) intermediateCodeGenerator.semanticStack.pop();
+        String src1Type = getType(src1);
+        String src2Type = getType(src2);
+        if (src1Type != null && src1Type.equals("int")){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 4, 0);
+        }
+        if (src2Type != null && src2Type.equals("int")){
+            errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 4, 1);
+        }
         Integer dst = intermediateCodeGenerator.getTemp();
+        temporary.add(dst.toString() + " " + "boolean");
         intermediateCodeGenerator.write("AND", src2, src1, dst.toString());
         intermediateCodeGenerator.semanticStack.push(dst.toString());
     }

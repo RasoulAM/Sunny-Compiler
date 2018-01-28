@@ -74,39 +74,45 @@ public class ErrorHandler {
         switch (operation){
             case 1: //add
                 if (handSide == 0){
-                    System.out.println(alert + " at the ADD operation. RHS is boolean!");
+                    System.out.println(alert + " at the ADD operation. second operand is boolean!");
                 } else {
-                    System.out.println(alert + " at the ADD operation. LHS is boolean!");
+                    System.out.println(alert + " at the ADD operation. first operand is boolean!");
                 }
                 break;
             case 2: // sub
                 if (handSide == 0){
-                    System.out.println(alert + " at the SUB operation. RHS is boolean!");
+                    System.out.println(alert + " at the SUB operation. second operand is boolean!");
                 } else {
-                    System.out.println(alert + " at the SUB operation. LHS is boolean!");
+                    System.out.println(alert + " at the SUB operation. first operand is boolean!");
                 }
                 break;
             case 3: // mult
                 if (handSide == 0){
-                    System.out.println(alert + " at the MULT operation. RHS is boolean!");
+                    System.out.println(alert + " at the MULT operation. second operation is boolean!");
                 } else {
-                    System.out.println(alert + " at the MULT operation. LHS is boolean!");
+                    System.out.println(alert + " at the MULT operation. first operation is boolean!");
                 }
                 break;
             case 4: // &&
-
+                if (handSide == 0){
+                    System.out.println(alert + " at the AND operation. second operation is integer!");
+                } else {
+                    System.out.println(alert + " at the AND operation. first operation is integer!");
+                }
                 break;
             case 5: //assignment
-
+                System.out.println(" The assignment LHS and RHS has not same type.");
                 break;
             case 6: // lessThan
-
+                if (handSide == 0){
+                    System.out.println(alert + " at the LT operation. second operation is boolean!");
+                } else {
+                    System.out.println(alert + " at the LT operation. first operation is boolean!");
+                }
                 break;
             case 7: // equal
-
+                System.out.println(" The equality LHS and RHS are not the same type!");
                 break;
-
-
 
         }
     }
