@@ -23,3 +23,19 @@ public class Cls2 {
     }
 }
 EOF
+/*
+public class Cls2 {
+ public static void main() {
+  boolean a;
+  int i;
+  i = 0;
+  while (i < 10) {
+   System.out.println(a);
+   i = i + 1;
+  }
+
+ }
+
+}
+
+EOF*/

@@ -13,7 +13,7 @@ public class Grammar {
     private ArrayList<Symbol> terminals;
     private ArrayList<Symbol> nonTerminals;
     Symbol startSymbol;
-    private String grammarFileName = "grammar.grm";
+    private String grammarFileName = "Grammar.grm";
 
     static Symbol epsilon;
     static Symbol endOfFile;
