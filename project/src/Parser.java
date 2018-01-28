@@ -266,6 +266,25 @@ public class Parser {
             case "#main":
                 main_jmp();
                 break;
+            case "#pop_counter":
+                pop_counter();
+                break;
+        }
+    }
+
+    private void pop_counter() {
+        Integer numOfGivenParameters = (Integer) intermediateCodeGenerator.semanticStack.pop();
+        String methodName = (String) intermediateCodeGenerator.semanticStack.peek();
+        Integer numOfActualParameters = 0;
+        for (int i = 0; i <scopes.size() ; i++) {
+            for (int j = 0; j < scopes.get(i).getRows().size(); j++) {
+                if (scopes.get(i).getRows().get(j).getType().equals("method") &&
+                        scopes.get(i).getRows().get(j).getName().equals(methodName) &&
+                        scopes.get(i).getRows().get(j).getFunctionArgs().size() > numOfGivenParameters){
+                    errorHandler.methodParNumberMisMatch(scanner.getCurrentLineNumber(), methodName, 1);
+                }
+
+            }
         }
     }
 
@@ -284,16 +303,17 @@ public class Parser {
         String methodName = (String) intermediateCodeGenerator.semanticStack.peek();
         SymbolTable father = intermediateCodeGenerator.scopeStack.peek();
         Integer index = father.findRowByName(methodName);
-        while (father != null && index == -1){
+        while (index == -1){
             father = father.getParent();
             index = father.findRowByName(methodName);
         }
-        if (index == -1){
-            // TODO: 1/28/18
-        }
         intermediateCodeGenerator.scopeStack.pop();
         intermediateCodeGenerator.scopeStack.push(father);
-        String parAddress = father.getRows().get(index).getFunctionArgs().get(counter).getMemory();
+        String parAddress = "$$";
+        if (counter < father.getRows().get(index).getFunctionArgs().size())
+            parAddress = father.getRows().get(index).getFunctionArgs().get(counter).getMemory();
+        else
+            errorHandler.methodParNumberMisMatch(scanner.getCurrentLineNumber(), methodName, 0);
         intermediateCodeGenerator.semanticStack.push(counter);
         intermediateCodeGenerator.semanticStack.push(parAddress);
     }
@@ -509,7 +529,8 @@ public class Parser {
         if (srcType != null && dstType != null && !getType(src).equals(getType(dst))){
             errorHandler.operandNotMatch(scanner.getCurrentLineNumber(), 5, 0);
         }
-        intermediateCodeGenerator.write("ASSIGN", src, dst, "");
+        if (!src.equals("$$") && !dst.equals("$$"))
+            intermediateCodeGenerator.write("ASSIGN", src, dst, "");
     }
 
     private void add(){

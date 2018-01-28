@@ -123,4 +123,14 @@ public class ErrorHandler {
                 " method named ( " + methodName + " ) is incorrect.");
     }
 
+    public void methodParNumberMisMatch(int lineNumber, String method, int state){
+        if (state == 1){
+            System.out.println("Semantic Error at line: " + lineNumber +" too few parameters to function "+
+                    method + " does not match!");
+        } else {
+            System.out.println("Semantic Error at line: " + lineNumber +" too many parameters to function "+
+                    method + " does not match!");
+        }
+    }
+
 }

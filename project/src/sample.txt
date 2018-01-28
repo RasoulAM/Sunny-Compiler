@@ -1,10 +1,15 @@
 class Cls{
-
+    static int ostad;
+    public static int inAction (int b, int c){
+        b = b * 2;
+        return b;
+    }
 }
 
 class m extends Cls{
   static boolean d ;
       public static int test( int a ) {
+          a = m.inAction(a);
           return a ;
       }
 }
@@ -14,7 +19,7 @@ public class Cls2 {
     public static void main( ) {
         int r ;
         r = 1;
-        System.out.println(Cls.test(r));
+        System.out.println(m.test(r,1));
     }
 }
 EOF

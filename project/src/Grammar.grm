@@ -47,7 +47,7 @@
 @25.	Factor -> Integer
 @26.	Factor1 -> #push_change_scope . #pid #push Identifier #return_scope Factor2 
 @26.	Factor1 -> ϵ #pop
-@27.	Factor2 -> ( #set_counter Arguments ) #pop #do_method
+@27.	Factor2 -> ( #set_counter Arguments ) #pop_counter #do_method
 @27.	Factor2 -> ϵ #pop
 @28.	RelExpression1 -> && Expression  RelTerm1 #and RelExpression1
 @28.	RelExpression1 -> ϵ
