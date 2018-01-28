@@ -1,31 +1,25 @@
-class cls1{
-    static int a;
-
-    public static int meth (int c){
-        a = 3;
-        return 1;
-    }
-}
-
-class cls2 extends cls1{
-
-    public static int func(){
-        int b;
-        b = a *;
+class Cls{
+    static int ostad;
+    public static int inAction (int b, int c){
+        b = b * 2;
         return b;
     }
+}
 
+class m extends Cls{
+  static boolean d ;
+      public static int test( int a ) {
+          a = m.inAction(a);
+          return a ;
+      }
 }
 
 
-public class Cls {
-  public static void main( ) {
-      int b;
-      int c;
-      while( b == 10){
-        b = cls1.meth(c);
-        c = 1;
-      }
-  }
+public class Cls2 {
+    public static void main( ) {
+        int r ;
+        r = 1;
+        System.out.println(m.test(r,1));
+    }
 }
 EOF

@@ -68,4 +68,69 @@ public class ErrorHandler {
 
     }
 
+    // for semantic error checking
+    public void operandNotMatch(int lineNumber, int operation, int handSide){
+        String alert = "OOPS! Semantic Error occur on line: " + lineNumber;
+        switch (operation){
+            case 1: //add
+                if (handSide == 0){
+                    System.out.println(alert + " at the ADD operation. second operand is boolean!");
+                } else {
+                    System.out.println(alert + " at the ADD operation. first operand is boolean!");
+                }
+                break;
+            case 2: // sub
+                if (handSide == 0){
+                    System.out.println(alert + " at the SUB operation. second operand is boolean!");
+                } else {
+                    System.out.println(alert + " at the SUB operation. first operand is boolean!");
+                }
+                break;
+            case 3: // mult
+                if (handSide == 0){
+                    System.out.println(alert + " at the MULT operation. second operation is boolean!");
+                } else {
+                    System.out.println(alert + " at the MULT operation. first operation is boolean!");
+                }
+                break;
+            case 4: // &&
+                if (handSide == 0){
+                    System.out.println(alert + " at the AND operation. second operation is integer!");
+                } else {
+                    System.out.println(alert + " at the AND operation. first operation is integer!");
+                }
+                break;
+            case 5: //assignment
+                System.out.println(alert + " The assignment LHS and RHS has not same type.");
+                break;
+            case 6: // lessThan
+                if (handSide == 0){
+                    System.out.println(alert + " at the LT operation. second operation is boolean!");
+                } else {
+                    System.out.println(alert + " at the LT operation. first operation is boolean!");
+                }
+                break;
+            case 7: // equal
+                System.out.println(alert + " The equality LHS and RHS are not the same type!");
+                break;
+
+        }
+
+    }
+
+    public void FunctionReturnTypeMisMatch(int lineNumber, String methodName){
+        System.out.println("Semantic Error at line: " + lineNumber + " return type of" +
+                " method named ( " + methodName + " ) is incorrect.");
+    }
+
+    public void methodParNumberMisMatch(int lineNumber, String method, int state){
+        if (state == 1){
+            System.out.println("Semantic Error at line: " + lineNumber +" too few parameters to function "+
+                    method + " does not match!");
+        } else {
+            System.out.println("Semantic Error at line: " + lineNumber +" too many parameters to function "+
+                    method + " does not match!");
+        }
+    }
+
 }
