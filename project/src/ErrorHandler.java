@@ -101,7 +101,7 @@ public class ErrorHandler {
                 }
                 break;
             case 5: //assignment
-                System.out.println(" The assignment LHS and RHS has not same type.");
+                System.out.println(alert + " The assignment LHS and RHS has not same type.");
                 break;
             case 6: // lessThan
                 if (handSide == 0){
@@ -111,10 +111,16 @@ public class ErrorHandler {
                 }
                 break;
             case 7: // equal
-                System.out.println(" The equality LHS and RHS are not the same type!");
+                System.out.println(alert + " The equality LHS and RHS are not the same type!");
                 break;
 
         }
+
+    }
+
+    public void FunctionReturnTypeMisMatch(int lineNumber, String methodName){
+        System.out.println("Semantic Error at line: " + lineNumber + " return type of" +
+                " method named ( " + methodName + " ) is incorrect.");
     }
 
 }

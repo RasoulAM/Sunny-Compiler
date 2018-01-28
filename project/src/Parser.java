@@ -76,6 +76,7 @@ public class Parser {
 //            }
 //        }
         System.out.println("Done");
+//        System.out.println(p.scopes.get(1));
     }
 
     private void startParse() {
@@ -283,6 +284,15 @@ public class Parser {
         String methodName = (String) intermediateCodeGenerator.semanticStack.peek();
         SymbolTable father = intermediateCodeGenerator.scopeStack.peek();
         Integer index = father.findRowByName(methodName);
+        while (father != null && index == -1){
+            father = father.getParent();
+            index = father.findRowByName(methodName);
+        }
+        if (index == -1){
+            // TODO: 1/28/18
+        }
+        intermediateCodeGenerator.scopeStack.pop();
+        intermediateCodeGenerator.scopeStack.push(father);
         String parAddress = father.getRows().get(index).getFunctionArgs().get(counter).getMemory();
         intermediateCodeGenerator.semanticStack.push(counter);
         intermediateCodeGenerator.semanticStack.push(parAddress);
@@ -370,7 +380,14 @@ public class Parser {
         Integer rowIndex = scanner.getCurrentSymbolTable().getParent().findRowByName(scanner.getCurrentSymbolTable().getName());
         Row thisMethod = scanner.getCurrentSymbolTable().getParent().getRows().get(rowIndex);
         Integer address = thisMethod.getRetValueAddress();
-        intermediateCodeGenerator.write("ASSIGN", intermediateCodeGenerator.semanticStack.pop().toString(), address.toString(), "");
+        String toBeAssigned = intermediateCodeGenerator.semanticStack.pop().toString();
+        String srcType = thisMethod.getReturnValueType();
+        String dstType = getType(toBeAssigned);
+        if (srcType != null && dstType != null && !srcType.equals(dstType)){
+            errorHandler.FunctionReturnTypeMisMatch(scanner.getCurrentLineNumber(), thisMethod.getName());
+        }
+
+        intermediateCodeGenerator.write("ASSIGN", toBeAssigned, address.toString(), "");
 
         intermediateCodeGenerator.write("JP", "@" + thisMethod.getReturnAddressAddress().toString(),"", "");
 

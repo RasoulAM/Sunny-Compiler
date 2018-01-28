@@ -1,6 +1,20 @@
-public class OSTAD{
-    public static void main(){
-        System.out.println(3-2+1);
+class Cls{
+
+}
+
+class m extends Cls{
+  static boolean d ;
+      public static int test( int a ) {
+          return a ;
+      }
+}
+
+
+public class Cls2 {
+    public static void main( ) {
+        int r ;
+        r = 1;
+        System.out.println(Cls.test(r));
     }
 }
 EOF

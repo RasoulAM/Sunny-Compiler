@@ -88,7 +88,10 @@ public class Row {
                 "name='" + name + '\'' +
                 ", address=" + address +
                 ", type='" + type + '\'' +
-                ", functionArgsType=" + functionArgs +
+                ", retValueAddress=" + retValueAddress +
+                ", returnValueType='" + returnValueType + '\'' +
+                ", returnAddressAddress=" + returnAddressAddress +
+                ", functionArgs=" + functionArgs +
                 '}';
     }
 }
