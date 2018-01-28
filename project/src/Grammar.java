@@ -230,50 +230,48 @@ public class Grammar {
     }
 
     private void initialize_grammar() {
+        ArrayList<String> theGrammar = new ArrayList<>();
         scanner = new Scanner(file);
         nonTerminals = new ArrayList<>();
         terminals = new ArrayList<>();
         rules = new ArrayList<>();
         boolean setStart = false;
         while(scanner.hasNext()){
-            scanner.next();
-            Symbol next = new Symbol(scanner.next(),Type.NON_TERMINAL);
+            theGrammar.add(scanner.next());
+            String temp = scanner.next();
+            theGrammar.add(temp);
+            Symbol next = new Symbol(temp,Type.NON_TERMINAL);
             if (!nonTerminals.contains(next))
                 nonTerminals.add(next);
             if (!setStart) {
                 startSymbol = next;
                 setStart = true;
             }
-            scanner.nextLine();
+            theGrammar.add(scanner.next());
+            theGrammar.add(scanner.nextLine());
         }
 
         scanner.close();
 
-        try {
-            boolean isWindows = System.getProperty("os.name").contains("Windows");
-            String workingDir;
-            if (isWindows)
-                workingDir = "project/src/";
-            else
-                workingDir = "./src/";
-            scanner = new Scanner(new FileInputStream(workingDir + "Grammar-Copy.grm"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
         int index = 1;
-        while (scanner.hasNext()){
-            scanner.next();
-            String lhs = scanner.next();
+        int arrIndex = 0;
+        while (arrIndex < theGrammar.size()){
+            arrIndex++;
+            String lhs = theGrammar.get(arrIndex);
+            arrIndex++;
             if (getNonTerminal(lhs) == null) {
                 System.out.println("Undefined Non terminal in line " + (new Integer(index)).toString());
                 return;
             }
             Symbol newLHS = getNonTerminal(lhs);
-            if (!Objects.equals(scanner.next(), "->")) {
+            String temp = theGrammar.get(arrIndex);
+            arrIndex++;
+            if (!Objects.equals(temp, "->")) {
                 System.out.println("Grammar is not context free!! Check line " + index);
                 return;
             }
-            String[] rhs = scanner.nextLine().split(" ");
+            String[] rhs = theGrammar.get(arrIndex).split(" ");
+            arrIndex++;
             ArrayList<Symbol> newRHS = new ArrayList<>();
             for (String s: rhs) {
                 if (s.trim().length() == 0)
