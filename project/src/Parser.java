@@ -7,43 +7,32 @@ public class Parser {
 
     ParseTable parseTable;
     SymbolTable parentTable;
-//    SymbolTable currentSymbolTable;
     ArrayList<SymbolTable> scopes;
     Stack<Symbol> parseStack;
     ErrorHandler errorHandler;
-
     Scanner scanner;
-
     Grammar grammar;
-
-    String programSrc;
-
+    String programName = "sample.txt";
     Token currentToken;
-
     IntermediateCodeGenerator intermediateCodeGenerator;
 
     Parser(){
         boolean isWindows = System.getProperty("os.name").contains("Windows");
-        String workingDir;
+        String programSrc;
         if (isWindows)
-            workingDir = "project";
+            programSrc = "project/src/" + programName;
         else
-            workingDir = ".";
-        programSrc = workingDir + "/src/sample.txt";
+            programSrc = "./src/" + programName;
         parseTable = new ParseTable();
         parentTable = new SymbolTable("package");
-//        scanner.setCurrentSymbolTable(parentTable);
         parseStack = new Stack<>();
         scopes = new ArrayList<>();
         errorHandler = new ErrorHandler(this);
         scanner = new Scanner(programSrc, parentTable, errorHandler);
         grammar = new Grammar();
         intermediateCodeGenerator = new IntermediateCodeGenerator();
-
         parseStack.push(grammar.startSymbol);
         startParse();
-
-
     }
 
     public static void main(String[] args) {
@@ -61,10 +50,6 @@ public class Parser {
         currentToken = scanner.getNextToken();
         while(true){
             String s = currentToken.getComparable();
-//            if (Objects.equals(currentToken.getFirst(), "keyword"))
-//                s = currentToken.getSecond();
-//            else
-//                s = currentToken.getFirst();
             if (parseStack.empty())
                 break;
 //            System.out.println(parseStack);

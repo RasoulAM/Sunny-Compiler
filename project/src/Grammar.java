@@ -13,6 +13,7 @@ public class Grammar {
     private ArrayList<Symbol> terminals;
     private ArrayList<Symbol> nonTerminals;
     Symbol startSymbol;
+    private String grammarFileName = "grammar.grm";
 
     static Symbol epsilon;
     static Symbol endOfFile;
@@ -23,12 +24,12 @@ public class Grammar {
     Grammar(){
         try {
             boolean isWindows = System.getProperty("os.name").contains("Windows");
-            String workingDir;
+            String grammarSrc;
             if (isWindows)
-                workingDir = "project";
+                grammarSrc = "project/src/" + grammarFileName;
             else
-                workingDir = ".";
-            file = new FileInputStream(workingDir + "/src/Grammar.grm");
+                grammarSrc = "./src/" + grammarFileName;
+            file = new FileInputStream(grammarSrc);
             initialize_grammar();
         } catch (FileNotFoundException e) {
             System.out.println("File not found!");
@@ -255,10 +256,10 @@ public class Grammar {
             boolean isWindows = System.getProperty("os.name").contains("Windows");
             String workingDir;
             if (isWindows)
-                workingDir = "project";
+                workingDir = "project/src/";
             else
-                workingDir = ".";
-            scanner = new Scanner(new FileInputStream(workingDir + "/src/" + "Grammar-Copy.grm"));
+                workingDir = "./src/";
+            scanner = new Scanner(new FileInputStream(workingDir + "Grammar-Copy.grm"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -390,7 +391,7 @@ public class Grammar {
 
 
     public static void main(String[] args) {
-        new Grammar();
+//        new Grammar();
 //        FileWriter file = null;
 //        try {
 //            file = new FileWriter("new.txt");
